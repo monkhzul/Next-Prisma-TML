@@ -12,11 +12,21 @@ import 'react-datepicker/dist/react-datepicker.css'
 import DatePicker from 'rsuite/DatePicker'
 import 'rsuite/dist/rsuite.css';
 
-export default function Main() {
+export default function Main(props) {
     const [data, setData] = useState([]);
     const [importData, setImportData] = useState([]);
 
     const inputRef = useRef(null);
+    const [render, setRender] = useState(false);
+
+    const [value, setValue] = useState([null, null]);
+
+    const date = new Date();
+    const today = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+
+    const [startDate, setStartDate] = useState(date);
+    const [endDate, setEndDate] = useState(date);
+    const [userChoice, setUserChoice] = useState("")
 
     useEffect(() => {
         const get = async () => {
@@ -25,7 +35,7 @@ export default function Main() {
             setData(res);
         }
         get();
-    }, [])
+    }, [render])
 
     const [pageNumber, setPageNumber] = useState(0);
 
@@ -60,25 +70,46 @@ export default function Main() {
                         Amount: jsonData[i].amount,
                         state: 1,
                         createdate: new Date(),
-                        createUser: "z"
+                        createUser: "many"
                     })
                 })
                 .then(err => console.log(err.status))
+                .then(() => setRender(!render))
             }
         }
 
         insert();
-
         
     };
 
     const pageCount = Math.ceil(data.length / perPage);
 
     const Send = () => {
-        const customer = document.getElementById("select").value;
         const price = document.getElementById("price").value;
 
-        console.log(price)
+        console.log(userChoice.value, price)
+
+        const insert = () => {
+                fetch('http://localhost:3000/api/data/insert', {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tradeshopid: userChoice.value,
+                        mmonth: "mmonth",
+                        discounttype: "type",
+                        Amount: price,
+                        state: 1,
+                        createdate: new Date(),
+                        createUser: "one"
+                    })
+                })
+                .then(err => console.log(err.status))
+                .then(() => setRender(!render))
+        }
+        insert();
+
     }
 
     const changePage = ({ selected }) => {
@@ -87,6 +118,10 @@ export default function Main() {
 
     const display = data.slice(pagesVisited, pagesVisited + perPage)
         .map((data, i) => {
+            // if (startDate <= data.createdate && endDate >= data.createdate) {
+            //     console.log("dc")
+            // }
+            console.log(startDate, endDate)
             return (
                 <tr>
                     <td>{i + 1}</td>
@@ -107,14 +142,6 @@ export default function Main() {
         })
     }
 
-    const [value, setValue] = useState([null, null]);
-
-    const date = new Date();
-    const today = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
-
-    const [startDate, setStartDate] = useState(date);
-    const [endDate, setEndDate] = useState("");
-
     return (
         <div className={`${style.App} p-3`}>
             <div className={`head flex flex-col sm:flex-row w-full`}>
@@ -124,6 +151,7 @@ export default function Main() {
                             <label htmlFor="" className='mx-1 my-1'>Харилцагч</label>
                             <Select
                                 options={options}
+                                onChange={(choice) => setUserChoice(choice)}
                             />
                         </div>
                         <div className={`flex flex-col w-[40%] ${style.customerForm}`}>
@@ -131,7 +159,7 @@ export default function Main() {
                             <input type="text" name="" id="price" className={`border p-2 ${style.price}`} placeholder='Үнийн дүн' />
                         </div>
                     </div>
-                    <button type="submit" className={`border w-1/3 p-2 my-3 mx-auto font-semibold hover:bg-slate-200`}>Илгээх</button>
+                    <div className={`border w-1/3 p-2 my-3 mx-auto font-semibold hover:bg-slate-200`} onClick={Send}>Илгээх</div>
                 </form>
 
                 <div className={`${style.customerForm} w-full sm:w-1/2 flex justify-around items-center`}>
@@ -148,19 +176,9 @@ export default function Main() {
                 </div>
             </div>
 
-            <div className='border'>
-                {importData.map(data =>
-                    <div className='flex'>
-                        <p className='mx-2'>{data.Firstname}</p>
-                        <p className='mx-2'>{data.Lastname}</p>
-                        <p className='mx-2'>{data.Email}</p>
-                    </div>
-                )}
-            </div>
-
             <div className={`flex flex-col justify-end w-full items-center mt-[25%] sm:flex-row sm:mt-0`}>
 
-                <div className='w-full flex items-center sm:w-1/4 justify-between'>
+                <div className='w-full flex items-center sm:w-[30%] justify-between'>
                     <div>
                         <DatePicker
                             size='lg'
@@ -184,7 +202,7 @@ export default function Main() {
                 {/* <button type='submit' className={`px-5 py-1 ml-5 border rounded-md bg-slate-200 font-semibold text-gray-600
                                                  hover:text-white hover:bg-slate-600 mt-[5%] sm:mt-0`}>Харах</button> */}
             </div>
-            {console.log(startDate > endDate ? 'start' : "end")}
+            {/* {console.log(startDate > endDate ? 'start' : "end")} */}
             <div className={`body mt-5`}>
                 <Table striped bordered hover>
                     <thead>

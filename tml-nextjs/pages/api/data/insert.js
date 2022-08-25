@@ -23,15 +23,3 @@ export default async function handler(req, res) {
     VALUES (${tradeshopid}, '${mmonth}', '${discounttype}', ${Amount}, ${state}, ${createdate}, ${createUser})`
   res.status(200).send(data)
 }
-
-
-// INSERT INTO [SMTExchange_Anungoo].[dbo].[t_DiscountTML]
-//            ([tradeshopid]
-//            ,[mmonth]
-//            ,[discounttype]
-//            ,[Amount]
-//            ,[state]
-//            ,[createdate]
-//            ,[createUser])
-//      VALUES
-//            (1, 'month', 'type', 23, 2, 2022-08-25, 2022-08-25)

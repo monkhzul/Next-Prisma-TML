@@ -6,6 +6,7 @@ import ReactPaginate from "react-paginate"
 import { CSVLink } from 'react-csv'
 import $ from 'jquery'
 import Select from 'react-select'
+import { ToastContainer, toast } from 'react-toastify';
 import style from '../styles/style.module.css'
 import 'react-datepicker/dist/react-datepicker.css'
 import DatePicker from 'rsuite/DatePicker'
@@ -44,6 +45,31 @@ export default function Main() {
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
         setImportData(jsonData)
+
+        const insert = () => {
+            for (var i in jsonData) {
+                fetch('http://localhost:3000/api/data/insert', {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tradeshopid: jsonData[i].id,
+                        mmonth: "mmonth",
+                        discounttype: jsonData[i].dis,
+                        Amount: jsonData[i].amount,
+                        state: 1,
+                        createdate: new Date(),
+                        createUser: "z"
+                    })
+                })
+                .then(err => console.log(err.status))
+            }
+        }
+
+        insert();
+
+        
     };
 
     const pageCount = Math.ceil(data.length / perPage);
@@ -59,17 +85,15 @@ export default function Main() {
         setPageNumber(selected)
     }
 
-    console.log(importData !== '' ? importData[0].Firstname : '')
-
     const display = data.slice(pagesVisited, pagesVisited + perPage)
         .map((data, i) => {
             return (
                 <tr>
                     <td>{i + 1}</td>
-                    <td>{data.TradeShopId}</td>
-                    <td>{data.Name}</td>
-                    <td>{data.FullAddress}</td>
-                    <td>{data.DateRemove}</td>
+                    <td>{data.tradeshopid}</td>
+                    <td>{data.createUser}</td>
+                    <td>{data.mmonth}</td>
+                    <td>{data.createdate}</td>
                 </tr>
             )
         })
@@ -78,8 +102,8 @@ export default function Main() {
 
     for (let i = 0; i < data.length; i++) {
         options.push({
-            value: data[i].Name,
-            label: data[i].Name
+            value: data[i].tradeshopid,
+            label: data[i].tradeshopid
         })
     }
 
@@ -125,7 +149,7 @@ export default function Main() {
             </div>
 
             <div className='border'>
-                {importData.map(data => 
+                {importData.map(data =>
                     <div className='flex'>
                         <p className='mx-2'>{data.Firstname}</p>
                         <p className='mx-2'>{data.Lastname}</p>
@@ -138,7 +162,7 @@ export default function Main() {
 
                 <div className='w-full flex items-center sm:w-1/4 justify-between'>
                     <div>
-                        <DatePicker 
+                        <DatePicker
                             size='lg'
                             value={startDate}
                             onChange={(date) => setStartDate(date)}
@@ -149,7 +173,7 @@ export default function Main() {
                         <p className='px-2 my-auto mx-auto'>to</p>
                     </div>
                     <div className=''>
-                        <DatePicker 
+                        <DatePicker
                             size='lg'
                             value={endDate}
                             onChange={(date) => setEndDate(date)}

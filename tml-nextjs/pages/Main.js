@@ -4,7 +4,7 @@ import Image from 'next/image'
 import * as XLSX from 'xlsx'
 import ReactPaginate from "react-paginate"
 import { CSVLink } from 'react-csv'
-import $ from 'jquery'
+import $, { ready } from 'jquery'
 import Select from 'react-select'
 import { ToastContainer, toast } from 'react-toastify';
 import style from '../styles/style.module.css'
@@ -17,7 +17,7 @@ export default function Main(props) {
     const [importData, setImportData] = useState([]);
 
     const inputRef = useRef(null);
-    const [render, setRender] = useState(false);
+    const [status, setStatus] = useState("");
 
     const [value, setValue] = useState([null, null]);
 
@@ -35,7 +35,7 @@ export default function Main(props) {
             setData(res);
         }
         get();
-    }, [render])
+    }, [])
 
     const [pageNumber, setPageNumber] = useState(0);
 
@@ -56,7 +56,7 @@ export default function Main(props) {
 
         setImportData(jsonData)
 
-        const insert = () => {
+        function insert() {
             for (var i in jsonData) {
                 fetch('http://localhost:3000/api/data/insert', {
                     method: "POST",
@@ -73,13 +73,16 @@ export default function Main(props) {
                         createUser: "many"
                     })
                 })
-                .then(err => console.log(err.status))
-                .then(() => setRender(!render))
+                    .then(res => {
+                        if (res.ok) {
+                            toast("Амжилттай!")
+                        } else {
+                            toast("Амжилтгүй! Буруу өгөгдөл орсон байна.")
+                        }
+                    })
             }
         }
-
-        insert();
-        
+        insert()
     };
 
     const pageCount = Math.ceil(data.length / perPage);
@@ -90,26 +93,30 @@ export default function Main(props) {
         console.log(userChoice.value, price)
 
         const insert = () => {
-                fetch('http://localhost:3000/api/data/insert', {
-                    method: "POST",
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        tradeshopid: userChoice.value,
-                        mmonth: "mmonth",
-                        discounttype: "type",
-                        Amount: price,
-                        state: 1,
-                        createdate: new Date(),
-                        createUser: "one"
-                    })
+            fetch('http://localhost:3000/api/data/insert', {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    tradeshopid: userChoice.value,
+                    mmonth: "mmonth",
+                    discounttype: "type",
+                    Amount: price,
+                    state: 1,
+                    createdate: new Date(),
+                    createUser: "one"
                 })
-                .then(err => console.log(err.status))
-                .then(() => setRender(!render))
+            })
+            .then(res => {
+                if (res.ok) {
+                    toast("Амжилттай!")
+                } else {
+                    toast("Амжилтгүй! Буруу өгөгдөл орсон байна.")
+                }
+            })
         }
         insert();
-
     }
 
     const changePage = ({ selected }) => {
@@ -118,10 +125,6 @@ export default function Main(props) {
 
     const display = data.slice(pagesVisited, pagesVisited + perPage)
         .map((data, i) => {
-            // if (startDate <= data.createdate && endDate >= data.createdate) {
-            //     console.log("dc")
-            // }
-            console.log(startDate, endDate)
             return (
                 <tr>
                     <td>{i + 1}</td>
@@ -161,6 +164,8 @@ export default function Main(props) {
                     </div>
                     <div className={`border w-1/3 p-2 my-3 mx-auto font-semibold hover:bg-slate-200`} onClick={Send}>Илгээх</div>
                 </form>
+
+                <ToastContainer />
 
                 <div className={`${style.customerForm} w-full sm:w-1/2 flex justify-around items-center`}>
                     <input className={`d-none`} type="file" id='file' ref={inputRef} accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" onChange={(e) => handleFileChange(e)} />

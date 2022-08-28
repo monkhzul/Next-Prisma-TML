@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import Table from "react-bootstrap/Table";
 import Image from "next/image";
 import * as XLSX from "xlsx";
+import * as FileSaver from "file-saver";
 import ReactPaginate from "react-paginate";
 import { CSVLink } from "react-csv";
 import $, { ready } from "jquery";
@@ -20,11 +21,9 @@ export default function Main(props) {
   const [status, setStatus] = useState("");
 
   const date = new Date();
-  const today =
-    date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
 
-  const [startDate, setStartDate] = useState(date);
-  const [endDate, setEndDate] = useState(date);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [userChoice, setUserChoice] = useState("");
   const [day, setDay] = useState([]);
 
@@ -166,6 +165,21 @@ export default function Main(props) {
     });
   }
 
+  console.log(day);
+
+  const arr = [];
+
+  for(var i in day) {
+      arr.push({
+        tradeshopid: day[i].tradeshopid,
+        amount: day[i].Amount,
+        user: day[i].createUser,
+        createDate: day[i].createdate 
+      })
+  }
+
+  console.log(arr);
+
   return (
     <div className={`${style.App} p-3`}>
       <div className={`head flex flex-col sm:flex-row w-full`}>
@@ -175,7 +189,7 @@ export default function Main(props) {
         >
           <div className={`w-full flex justify-around`}>
             <div className={`flex flex-col w-[40%] ${style.customerForm}`}>
-              <label htmlFor="" className="mx-1 my-1">
+              <label htmlFor="" className="mx-1 my-1 font-semibold">
                 Харилцагч
               </label>
               <Select
@@ -184,7 +198,7 @@ export default function Main(props) {
               />
             </div>
             <div className={`flex flex-col w-[40%] ${style.customerForm}`}>
-              <label htmlFor="" className={`mx-1 my-1`}>
+              <label htmlFor="" className={`mx-1 my-1 font-semibold`}>
                 Үнийн дүн
               </label>
               <input
@@ -197,7 +211,7 @@ export default function Main(props) {
             </div>
           </div>
           <div
-            className={`border w-1/3 p-2 my-3 mx-auto font-semibold hover:bg-slate-200`}
+            className={`border w-1/3 p-2 my-3 mx-auto font-semibold flex justify-center hover:bg-slate-200`}
             onClick={Send}
           >
             Илгээх
@@ -228,10 +242,11 @@ export default function Main(props) {
 
           <button
             type="submit"
-            className={`border lg:h-[30%] w-[40%] px-3 flex items-center hover:bg-slate-200`}
+            className={`border lg:h-[30%] w-[40%] px-3 flex items-center hover:bg-green-200 bg-slate-200`}
           >
             <CSVLink
-              data={data}
+              data={arr}
+              filename="TML.csv"
               className={`text-black font-semibold no-underline w-full flex justify-center`}
             >
               <Image
@@ -277,7 +292,7 @@ export default function Main(props) {
           </div>
         </div>
         <div
-          className={`px-5 py-1 ml-5 border rounded-md bg-slate-200 font-semibold text-gray-600
+          className={`px-4 py-1 ml-5 border rounded-md bg-slate-200 font-semibold text-gray-600
                                                  hover:text-white hover:bg-slate-600 mt-[5%] sm:mt-0 cursor-pointer`}
           onClick={chosenDate}
         >

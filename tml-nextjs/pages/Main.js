@@ -146,7 +146,7 @@ export default function Main(props) {
     .slice(pagesVisited, pagesVisited + perPage)
     .map((data, i) => {
       return (
-        <tr>
+        <tr key={i+1}>
           <td>{i + 1}</td>
           <td>{data.tradeshopid}</td>
           <td>{data.createUser}</td>

@@ -165,8 +165,6 @@ export default function Main(props) {
     });
   }
 
-  console.log(day);
-
   const arr = [];
 
   for(var i in day) {
@@ -177,8 +175,6 @@ export default function Main(props) {
         createDate: day[i].createdate 
       })
   }
-
-  console.log(arr);
 
   return (
     <div className={`${style.App} p-3`}>
@@ -266,7 +262,7 @@ export default function Main(props) {
       <div
         className={`flex flex-col justify-end w-full items-center mt-[25%] sm:flex-row sm:mt-0`}
       >
-        <div className="w-full flex items-center sm:w-[30%] justify-between">
+        <div className="flex items-center sm:w-[30%] justify-between">
           <div>
             <DatePicker
               size="lg"
@@ -291,14 +287,16 @@ export default function Main(props) {
             />
           </div>
         </div>
+
         <div
-          className={`px-4 py-1 ml-5 border rounded-md bg-slate-200 font-semibold text-gray-600
+          className={`flex px-4 py-1 ml-5 rounded-md bg-slate-200 font-semibold text-gray-600
                                                  hover:text-white hover:bg-slate-600 mt-[5%] sm:mt-0 cursor-pointer`}
           onClick={chosenDate}
         >
           Харах
         </div>
       </div>
+       
       {/* {console.log(startDate > endDate ? 'start' : "end")} */}
       <div className={`body mt-5`}>
         <Table striped bordered hover>

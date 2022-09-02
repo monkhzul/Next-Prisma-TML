@@ -30,7 +30,7 @@ export default function Main() {
 
     useEffect(() => {
         const get = async () => {
-            const req = await fetch("http://localhost:3000/api/db");
+            const req = await fetch("/api/db");
             const res = await req.json();
             setData(res);
             setDay(res);
@@ -40,7 +40,7 @@ export default function Main() {
 
     useEffect(() => {
         const get = async () => {
-            const req = await fetch("http://localhost:3000/api/trade");
+            const req = await fetch("/api/trade");
             const res = await req.json();
             setTrade(res);
         };
@@ -85,7 +85,7 @@ export default function Main() {
 
             if (count == jsonData.length) {
                 for (var i in jsonData) {
-                    fetch("http://localhost:3000/api/data/insert", {
+                    fetch("/api/data/insert", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -131,7 +131,7 @@ export default function Main() {
         console.log(userChoice.value, price);
 
         const insert = () => {
-            fetch("http://localhost:3000/api/data/insert", {
+            fetch("/api/data/insert", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -168,10 +168,8 @@ export default function Main() {
             const result = data.filter((d) => {
                 var time = new Date(d.createdate);
                 return (
-                    startdate.getMonth() + 1 <= time.getMonth() + 1 &&
-                    startdate.getDate() <= time.getDate() &&
-                    enddate.getMonth() + 1 >= time.getMonth() + 1 &&
-                    enddate.getDate() >= time.getDate()
+                    startdate.getMonth() + 1 <= time.getMonth() + 1 && startdate.getDate() <= time.getDate() ||
+                    enddate.getMonth() + 1 >= time.getMonth() + 1 && enddate.getDate() >= time.getDate()
                 );
             });
             setDay(result);

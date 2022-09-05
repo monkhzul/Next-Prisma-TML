@@ -11,7 +11,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "rsuite/DatePicker";
 import "rsuite/dist/rsuite.css";
 
-export default function Main() {
+function Main() {
     const [data, setData] = useState([]);
     const [importData, setImportData] = useState([]);
 
@@ -20,6 +20,8 @@ export default function Main() {
     const date = new Date();
     var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
     var lastDay = new Date(date.getFullYear(), date.getMonth(), 25);
+
+    // console.log(date)
 
     const [startdate, setStartDate] = useState(firstDay);
     const [enddate, setEndDate] = useState(date);
@@ -96,7 +98,6 @@ export default function Main() {
                             discounttype: "6",
                             Amount: jsonData[i].Amount,
                             state: 0,
-                            createdate: new Date(),
                             createUser: "user",
                         }),
                     })
@@ -106,7 +107,7 @@ export default function Main() {
                                 toast("Амжилттай!");
                                 setTimeout(() => {
                                     window.location.reload();
-                                  }, 1000)
+                                }, 1000)
                             }
                             else {
                                 toast("Амжилтгүй! Буруу өгөгдөл орсон байна.");
@@ -142,7 +143,6 @@ export default function Main() {
                     discounttype: "6",
                     Amount: price,
                     state: 0,
-                    createdate: new Date(),
                     createUser: "",
                 }),
             }).then((res) => {
@@ -168,8 +168,10 @@ export default function Main() {
             const result = data.filter((d) => {
                 var time = new Date(d.createdate);
                 return (
-                    startdate.getMonth() + 1 <= time.getMonth() + 1 && startdate.getDate() <= time.getDate() ||
-                    enddate.getMonth() + 1 >= time.getMonth() + 1 && enddate.getDate() >= time.getDate()
+                    ( isNaN( startdate ) && isNaN( enddate ) ) ||
+                    ( isNaN( startdate ) && time <= enddate ) ||
+                    ( startdate <= time && isNaN( enddate ) ) ||
+                    ( startdate <= time && time <= enddate )
                 );
             });
             setDay(result);
@@ -185,11 +187,11 @@ export default function Main() {
             const result = data.filter((d) => {
                 var time = new Date(d.createdate);
                 return (
-                    startdate.getMonth() + 1 <= time.getMonth() + 1 &&
-                    startdate.getDate() <= time.getDate() &&
-                    enddate.getMonth() + 1 >= time.getMonth() + 1 &&
-                    enddate.getDate() >= time.getDate()
-                );
+                    ( isNaN( startdate ) && isNaN( enddate ) ) ||
+                    ( isNaN( startdate ) && time <= enddate ) ||
+                    ( startdate <= time && isNaN( enddate ) ) ||
+                    ( startdate <= time && time <= enddate )
+                )
             });
             setDay(result);
         } else {
@@ -209,8 +211,8 @@ export default function Main() {
                 <tr key={i + 1}>
                     <td>{i + 1}</td>
                     <td>{data.tradeshopid}</td>
-                    <td>{data.createUser}</td>
-                    <td>{(data.Amount)} ₮</td>
+                    <td>{data.Name}</td>
+                    <td>{(data.Amount).toLocaleString()} ₮</td>
                     <td>{data.createdate}</td>
                 </tr>
             );
@@ -393,3 +395,7 @@ export default function Main() {
         </div>
     );
 }
+
+export default Main
+
+

@@ -3333,7 +3333,7 @@ model t_GoldenStore_Fact {
   // 50% но не менее 2 Дисплеев Int? @map("50% но не менее 2 Дисплеев")
   // This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
   // 2 Стойки Бритье Int? @map("2 Стойки Бритье")
-  NA                      String?   @map("2 Стойки Бритье ДА/НЕТ/NA") @db.VarChar(3)
+  NA_                     String?   @map("2 Стойки Бритье ДА/НЕТ/NA") @db.VarChar(3)
   // This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
   // Цель квалификации String? @map("Цель квалификации") @db.VarChar(255)
   gs_month                String?   @db.VarChar(7)
@@ -3366,11 +3366,11 @@ model t_GoldenStore_Fact {
   KBD_Name                String?   @db.VarChar(255)
   // This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
   // Доли полок Int? @map("Доли полок")
-  MAX                     Int?      @map("ОПД план MAX")
+  MAX_                    Int?      @map("ОПД план MAX")
   chOutOK                 Int?
   Top80                   Int?
   DirectCoveringCount     Int?
-  MAX_                    Int?      @map("Мерч план MAX")
+  MAX                     Int?      @map("Мерч план MAX")
   // This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
   // Отсутствующие категории String? @map("Отсутствующие категории") @db.VarChar(Max)
   SKU_____                String?   @map("5 SKU Олэй") @db.VarChar(3)
@@ -3394,7 +3394,7 @@ model t_GoldenStore_Fact {
   // This field was commented out because of an invalid name. Please provide a valid one that matches [a-zA-Z][a-zA-Z0-9_]*
   // 30% - шампуни + бальзамы String? @map("30% - шампуни + бальзамы") @db.VarChar(3)
   ReportMonth             String    @db.VarChar(7)
-  NA_                     String?   @map("3 брэнда на 80% касс ДА/НЕТ/NA") @db.VarChar(3)
+  NA                      String?   @map("3 брэнда на 80% касс ДА/НЕТ/NA") @db.VarChar(3)
   DateRemove              DateTime? @db.DateTime
   Removed                 Int?
   DateSkillOnGold         DateTime? @db.DateTime
@@ -7078,6 +7078,8 @@ model t_Supplies {
   @@index([ToDocumentID, DocumentId, DocumentDate], map: "_not_1C_IX_t_Supplies_44810")
   @@index([SupplyTypeId], map: "iSupplyTypeId_t_Supplies")
   @@index([ToDocumentID, Description], map: "NonClusteredIndex-20200304-181343")
+  @@index([DocumentId, DocumentDate], map: "_not_1C_IX_t_Supplies_11")
+  @@index([ToDocumentNo, DocumentDate], map: "_not_1C_IX_t_Supplies_9")
 }
 
 model t_SupplyDetails {

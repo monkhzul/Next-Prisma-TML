@@ -10,18 +10,25 @@ import style from "../styles/style.module.css";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "rsuite/DatePicker";
 import "rsuite/dist/rsuite.css";
+import ClipLoader from 'react-spinners/PulseLoader'
 
 function Main() {
     const [data, setData] = useState([]);
     const [importData, setImportData] = useState([]);
+    const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        setLoading(true)
+        setTimeout(() => {
+            setLoading(false)
+        }, 3000)
+    }, [])
 
     const inputRef = useRef(null);
 
     const date = new Date();
     var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
     var lastDay = new Date(date.getFullYear(), date.getMonth(), 25);
-
-    // console.log(date)
 
     const [startdate, setStartDate] = useState(firstDay);
     const [enddate, setEndDate] = useState(date);
@@ -365,6 +372,14 @@ function Main() {
 
             {/* {console.log(startdate > enddate ? 'start' : "end")} */}
             <div className={`body mt-5`}>
+                {loading ? <div className="flex">
+                                <ClipLoader 
+                                    size={20}
+                                    color={"#3dbee3"}
+                                    loading={loading}
+                                    className={"w-full flex justify-center"}
+                                />
+                            </div> : 
                 <Table striped bordered hover>
                     <thead>
                         <tr>
@@ -375,11 +390,11 @@ function Main() {
                             <th>Огноо</th>
                         </tr>
                     </thead>
-
                     <tbody className={`w-full`}>
-                        {display}
+                       {display}
                     </tbody>
                 </Table>
+                }
                 <ReactPaginate
                     previousLabel={"Previous"}
                     nextLabel={"Next"}
@@ -397,5 +412,7 @@ function Main() {
 }
 
 export default Main
+
+
 
 

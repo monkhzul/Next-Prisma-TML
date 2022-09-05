@@ -12,23 +12,23 @@ import DatePicker from "rsuite/DatePicker";
 import "rsuite/dist/rsuite.css";
 import ClipLoader from 'react-spinners/PulseLoader'
 
-function Main() {
+function Main({ users }) {
     const [data, setData] = useState([]);
     const [importData, setImportData] = useState([]);
     const [loading, setLoading] = useState(false)
+    const [loading1, setLoading1] = useState(false)
 
-    useEffect(() => {
-        setLoading(true)
-        setTimeout(() => {
-            setLoading(false)
-        }, 3000)
-    }, [])
+    // useEffect(() => {
+    //     setLoading(true)
+    //     setTimeout(() => {
+    //         setLoading(false)
+    //     }, 5000)
+    // }, [])
 
     const inputRef = useRef(null);
 
     const date = new Date();
     var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-    var lastDay = new Date(date.getFullYear(), date.getMonth(), 25);
 
     const [startdate, setStartDate] = useState(firstDay);
     const [enddate, setEndDate] = useState(date);
@@ -39,19 +39,25 @@ function Main() {
 
     useEffect(() => {
         const get = async () => {
+            setLoading(true)
             const req = await fetch("/api/db");
             const res = await req.json();
             setData(res);
             setDay(res);
+            setLoading(false)
         };
         get();
     }, []);
 
+    // console.log(data);
+
     useEffect(() => {
         const get = async () => {
+            setLoading1(true)
             const req = await fetch("/api/trade");
             const res = await req.json();
             setTrade(res);
+            setLoading1(false)
         };
         get();
     }, []);
@@ -251,6 +257,7 @@ function Main() {
 
     return (
         <div className={`${style.App} p-3`}>
+            <div>tradeshops: {users}</div>
             <div className={`head flex flex-col sm:flex-row w-full`}>
                 <form
                     action=""
@@ -261,17 +268,19 @@ function Main() {
                             <label htmlFor="" className="mx-1 my-1 font-semibold">
                                 Харилцагч
                             </label>
+                            
                             <Select
                                 options={options}
-                                onChange={(choice) => setUserChoice(choice)}
+                                onChange={(choice) => setUserChoice(choice)} 
                             />
+                            
                         </div>
                         <div className={`flex flex-col w-[40%] ${style.customerForm}`}>
                             <label htmlFor="" className={`mx-1 my-1 font-semibold`}>
                                 Үнийн дүн
                             </label>
                             <input
-                                type="text"
+                                type="number"
                                 name=""
                                 id="price"
                                 className={`border p-2 ${style.price}`}
@@ -335,7 +344,7 @@ function Main() {
             <div
                 className={`flex flex-col justify-end w-full items-center mt-[25%] sm:flex-row sm:mt-0`}
             >
-                <div className="flex items-center sm:w-[30%] justify-between">
+                <div className="flex items-center sm:w-[30%] justify-start">
                     <div>
                         <DatePicker
                             size="lg"
@@ -414,5 +423,9 @@ function Main() {
 export default Main
 
 
-
-
+export async function getServerSideProps({params,req,res,query,preview,previewData,resolvedUrl,locale,locales,defaultLocale}) {
+    console.log('Logging : '+res);
+    const data = await fetch('/api/trade');
+    const users = await data.json();
+    return { props: { users } }
+  }

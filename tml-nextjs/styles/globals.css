@@ -32,3 +32,7 @@ a {
 .rs-picker-has-value .rs-btn .rs-picker-toggle-value, .rs-picker-has-value .rs-picker-toggle .rs-picker-toggle-value {
   color: rgb(106, 156, 99) !important;
 }
+
+input[type='number']::-webkit-inner-spin-button, input[type='number']::-webkit-outer-spin-button {
+  display: none;
+}

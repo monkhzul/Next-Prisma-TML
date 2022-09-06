@@ -204,9 +204,7 @@ function Main(datas) {
     }
 
     setTimeout(() => {
-        // first()
-        console.log(startdate)
-        console.log(enddate)
+        first()
     }, 100)
 
     const chosenDate = () => {
@@ -274,6 +272,7 @@ function Main(datas) {
                                 options={options}
                                 onChange={(choice) => setUserChoice(choice)} 
                                 styles={style.reactSelect}
+                                isLoading
                             />
                             
                         </div>

@@ -11,56 +11,59 @@ import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "rsuite/DatePicker";
 import "rsuite/dist/rsuite.css";
 import ClipLoader from 'react-spinners/PulseLoader'
-
-function Main({ users }) {
-    const [data, setData] = useState([]);
-    const [importData, setImportData] = useState([]);
+import { useRouter } from 'next/router';
+ 
+function Main(datas) {
+    const [data, setData] = useState(datas.data.db);
     const [loading, setLoading] = useState(false)
-    const [loading1, setLoading1] = useState(false)
+    const [userChoice, setUserChoice] = useState("");
+    const [day, setDay] = useState(datas.data.db);
+    const [trade, setTrade] = useState(datas.data.trade);
+    const [ok, setOk] = useState("");
+    const [options, setOptions] = useState([]);
+    const {render, setRender} = datas.render
+    const router = useRouter();
 
-    // useEffect(() => {
-    //     setLoading(true)
-    //     setTimeout(() => {
-    //         setLoading(false)
-    //     }, 5000)
-    // }, [])
+    useEffect(() => {
+        console.log(datas);
+    }, [])
+    
+    // trade.map(trade => {
+    //     options.push({
+    //         value: trade.TradeShopId,
+    //         label: trade.Name,
+    //     });
+    // })
+
+    var array = [];
+    useEffect(() => {
+        trade.map(trade => {
+            array.push({
+                value: trade.TradeShopId,
+                label: trade.Name,
+            });
+        })
+        setOptions(array)
+    }, [])
 
     const inputRef = useRef(null);
 
     const date = new Date();
     var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-
     const [startdate, setStartDate] = useState(firstDay);
     const [enddate, setEndDate] = useState(date);
-    const [userChoice, setUserChoice] = useState("");
-    const [day, setDay] = useState([]);
-    const [trade, setTrade] = useState([]);
-    const [ok, setOk] = useState("");
 
-    useEffect(() => {
-        const get = async () => {
-            setLoading(true)
-            const req = await fetch("/api/db");
-            const res = await req.json();
-            setData(res);
-            setDay(res);
-            setLoading(false)
-        };
-        get();
-    }, []);
-
-    // console.log(data);
-
-    useEffect(() => {
-        const get = async () => {
-            setLoading1(true)
-            const req = await fetch("/api/trade");
-            const res = await req.json();
-            setTrade(res);
-            setLoading1(false)
-        };
-        get();
-    }, []);
+    // useEffect(() => {
+    //     const get = async () => {
+    //         setLoading(true)
+    //         const req = await fetch("/api/db");
+    //         const res = await req.json();
+    //         setData(res);
+    //         setDay(res);
+    //         setLoading(false)
+    //     };
+    //     get();
+    // }, []);
 
     const [pageNumber, setPageNumber] = useState(0);
 
@@ -85,8 +88,6 @@ function Main({ users }) {
         const worksheet = workbook.Sheets[workbook.SheetNames[0]];
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-        setImportData(jsonData);
-
         function insert() {
 
             var count = 0;
@@ -96,11 +97,9 @@ function Main({ users }) {
                 }
             }
 
-            console.log(count);
-
             if (count == jsonData.length) {
                 for (var i in jsonData) {
-                    fetch("/api/data/insert", {
+                    var response = fetch("/api/data/insert", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
@@ -114,19 +113,18 @@ function Main({ users }) {
                             createUser: "user",
                         }),
                     })
-                        .then((res) => {
-                            if (res.ok) {
-
-                                toast("Амжилттай!");
-                                setTimeout(() => {
-                                    window.location.reload();
-                                }, 1000)
-                            }
-                            else {
-                                toast("Амжилтгүй! Буруу өгөгдөл орсон байна.");
-                            }
-                        });
                 }
+                response.then((res) => {
+                    if (res.ok) {
+                        toast("Амжилттай!");
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 500)
+                    }
+                    else {
+                        toast("Амжилтгүй! Буруу өгөгдөл орсон байна.");
+                    }
+                });
             }
             else {
                 toast("Харилцагч олдсонгүй! Харилцагчийн ID-гаа шалгана уу!")
@@ -137,41 +135,54 @@ function Main({ users }) {
         console.log(ok)
     };
 
-    const pageCount = Math.ceil(day.length / perPage);
+    const Send = (e) => {
+        e.preventDefault();
 
-    const Send = () => {
-        const price = document.getElementById("price").value;
+        const priceValue = document.getElementById("price")
+        const price = priceValue.value;
 
-        console.log(userChoice.value, price);
-
-        const insert = () => {
-            fetch("/api/data/insert", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    tradeshopid: `${userChoice.value}`,
-                    mmonth: `${date.getFullYear() + '-' + (date.getMonth() + 1)}`,
-                    discounttype: "6",
-                    Amount: price,
-                    state: 0,
-                    createUser: "",
-                }),
-            }).then((res) => {
-                if (res.ok) {
-                    toast("Амжилттай!");
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000)
-                } else {
-                    toast("Амжилтгүй! Буруу өгөгдөл орсон байна.");
-                }
-            });
-        };
-        insert();
+        if (userChoice.value != undefined) {
+            if (price != '' && price != 0) {
+                const insert = () => {
+                    
+                        fetch("/api/data/insert", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                tradeshopid: `${userChoice.value}`,
+                                mmonth: `${date.getFullYear() + '-' + (date.getMonth() + 1)}`,
+                                discounttype: "6",
+                                Amount: price,
+                                state: 0,
+                                createUser: "",
+                            }),
+                        }).then((res) => {
+                            if (res.ok) {
+                                toast("Амжилттай!");
+                                priceValue.value = '';
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 500)
+                                
+                            } else {
+                                toast("Амжилтгүй! Буруу өгөгдөл орсон байна.");
+                            }
+                        })
+                };
+                insert();
+            }
+            else {
+                toast("Үнийн дүнг оруулна уу!")
+            }
+        }
+        else {
+            toast("Харилцагч сонгоно уу!")
+        }
     };
 
+    const pageCount = Math.ceil(day.length / perPage);
     const changePage = ({ selected }) => {
         setPageNumber(selected);
     };
@@ -181,9 +192,10 @@ function Main({ users }) {
             const result = data.filter((d) => {
                 var time = new Date(d.createdate);
                 return (
-                    ( isNaN( startdate ) && isNaN( enddate ) ) ||
-                    ( isNaN( startdate ) && time <= enddate ) ||
-                    ( startdate <= time && isNaN( enddate ) ) ||
+                    // ( isNaN( startdate ) && isNaN( enddate ) ) ||
+                    // ( isNaN( startdate ) && time <= enddate ) ||
+                    // ( startdate <= time && isNaN( enddate ) ) ||
+                    // ( startdate <= time && time <= enddate )
                     ( startdate <= time && time <= enddate )
                 );
             });
@@ -192,7 +204,9 @@ function Main({ users }) {
     }
 
     setTimeout(() => {
-        first()
+        // first()
+        console.log(startdate)
+        console.log(enddate)
     }, 100)
 
     const chosenDate = () => {
@@ -200,10 +214,11 @@ function Main({ users }) {
             const result = data.filter((d) => {
                 var time = new Date(d.createdate);
                 return (
-                    ( isNaN( startdate ) && isNaN( enddate ) ) ||
-                    ( isNaN( startdate ) && time <= enddate ) ||
-                    ( startdate <= time && isNaN( enddate ) ) ||
-                    ( startdate <= time && time <= enddate )
+                    // ( isNaN( startdate ) && isNaN( enddate ) ) ||
+                    // ( isNaN( startdate ) && time <= enddate ) ||
+                    // ( startdate <= time && isNaN( enddate ) ) ||
+                    // ( startdate <= time && time <= enddate )
+                    time >= startdate && time <= enddate
                 )
             });
             setDay(result);
@@ -231,33 +246,19 @@ function Main({ users }) {
             );
         });
 
-    const options = [];
-
-    for (let i = 0; i < trade.length; i++) {
-        options.push({
-            value: trade[i].TradeShopId,
-            label: trade[i].Name,
-        });
-    }
-
     const arr = [];
 
     for (var i in day) {
         arr.push({
             tradeshopid: day[i].tradeshopid,
             amount: day[i].Amount,
-            user: day[i].createUser,
             createDate: day[i].createdate,
-            discounttype: "6",
-            state: 0,
             mmonth: date.getFullYear() + '-' + (date.getMonth() + 1),
-            createUser: ""
         })
     }
-
+    
     return (
         <div className={`${style.App} p-3`}>
-            <div>tradeshops: {users}</div>
             <div className={`head flex flex-col sm:flex-row w-full`}>
                 <form
                     action=""
@@ -272,6 +273,7 @@ function Main({ users }) {
                             <Select
                                 options={options}
                                 onChange={(choice) => setUserChoice(choice)} 
+                                styles={style.reactSelect}
                             />
                             
                         </div>
@@ -334,7 +336,6 @@ function Main({ users }) {
                                 height={10}
                                 className={`p-1 sm:p-0 mr-2`}
                             />
-                            {/* w-[30%] sm:w-[50%] md:w-[25%] xl:w-[15%] */}
                             <p className={`my-auto font-semibold`}> Export To Excel </p>
                         </CSVLink>
                     </button>
@@ -379,7 +380,6 @@ function Main({ users }) {
         </div> */}
             </div>
 
-            {/* {console.log(startdate > enddate ? 'start' : "end")} */}
             <div className={`body mt-5`}>
                 {loading ? <div className="flex">
                                 <ClipLoader 
@@ -422,10 +422,3 @@ function Main({ users }) {
 
 export default Main
 
-
-export async function getServerSideProps({params,req,res,query,preview,previewData,resolvedUrl,locale,locales,defaultLocale}) {
-    console.log('Logging : '+res);
-    const data = await fetch('/api/trade');
-    const users = await data.json();
-    return { props: { users } }
-  }

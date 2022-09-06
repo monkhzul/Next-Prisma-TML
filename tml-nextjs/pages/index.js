@@ -5,8 +5,12 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'react-toastify/dist/ReactToastify.css';
 import Main from './Main'
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/router';
 
-export default function Home() {
+export default function Home(props) {
+
+  const [render, setRender] = useState(false);
+  const router = useRouter();
 
   return (
     <div className={styles.container}>
@@ -17,7 +21,7 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-          <Main/>
+          <Main data = {props} render = {{render, setRender}}/>
       </main>
 
       <footer className={`${styles.footer}`}>
@@ -35,4 +39,20 @@ export default function Home() {
       </footer>
     </div>
   )
+}
+
+export const getServerSideProps = async (context) => {
+
+  const res = await fetch('http://localhost:3000/api/db')
+  const db = await res.json()
+
+  const res1 = await fetch('http://localhost:3000/api/trade')
+  const trade = await res1.json()
+
+  return {
+      props: {
+        db: db,
+        trade: trade
+      }
+  }
 }

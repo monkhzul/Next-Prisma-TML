@@ -12,13 +12,8 @@ export default async function handler(req, res) {
   const createUser = req.body.createUser;
   
   const data = await prisma.$queryRaw`INSERT INTO [SMTExchange_Anungoo].[dbo].[t_DiscountTML]
-        ([tradeshopid]
-        ,[mmonth]
-        ,[discounttype]
-        ,[Amount]
-        ,[state]
-        ,[createdate]
-        ,[createUser])
-    VALUES (${tradeshopid}, '${mmonth}', '${discounttype}', ${Amount}, ${state}, getdate(), ${createUser})`
-  res.status(200).send(data)
+        ([tradeshopid], [mmonth], [discounttype], [Amount], [state], [createdate], [createUser])
+        VALUES (${tradeshopid}, '${mmonth}', '${discounttype}', ${Amount}, ${state}, getdate(), ${createUser})`
+
+  res.status(200).json(data)
 }

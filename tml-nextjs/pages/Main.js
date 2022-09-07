@@ -25,7 +25,10 @@ function Main(datas) {
     const router = useRouter();
 
     useEffect(() => {
-        console.log(datas);
+       setLoading(true)
+       setTimeout(() => {
+        setLoading(false)
+       }, 500)
     }, [])
     
     // trade.map(trade => {
@@ -182,25 +185,25 @@ function Main(datas) {
         }
     };
 
+
+
     const pageCount = Math.ceil(day.length / perPage);
     const changePage = ({ selected }) => {
         setPageNumber(selected);
     };
 
     const first = () => {
-        if (startdate != null && enddate != null) {
             const result = data.filter((d) => {
                 var time = new Date(d.createdate);
                 return (
-                    // ( isNaN( startdate ) && isNaN( enddate ) ) ||
-                    // ( isNaN( startdate ) && time <= enddate ) ||
-                    // ( startdate <= time && isNaN( enddate ) ) ||
-                    // ( startdate <= time && time <= enddate )
-                    ( startdate <= time && time <= enddate )
+                    ( isNaN( startdate ) && isNaN( enddate ) ) ||
+                    ( isNaN( startdate ) && time <= enddate ) ||
+                    ( startdate <= time && isNaN( enddate ) ) ||
+                    ( startdate <= time && time <= enddate ) ||
+                    ( startdate.getDate() <= time.getDate() && time.getDate() <= enddate.getDate()) 
                 );
             });
             setDay(result);
-        }
     }
 
     setTimeout(() => {
@@ -212,11 +215,11 @@ function Main(datas) {
             const result = data.filter((d) => {
                 var time = new Date(d.createdate);
                 return (
-                    // ( isNaN( startdate ) && isNaN( enddate ) ) ||
-                    // ( isNaN( startdate ) && time <= enddate ) ||
-                    // ( startdate <= time && isNaN( enddate ) ) ||
-                    // ( startdate <= time && time <= enddate )
-                    time >= startdate && time <= enddate
+                    ( isNaN( startdate ) && isNaN( enddate ) ) ||
+                    ( isNaN( startdate ) && time <= enddate ) ||
+                    ( startdate <= time && isNaN( enddate ) ) ||
+                    ( startdate <= time && time <= enddate ) ||
+                    ( startdate.getDate() <= time.getDate() && time.getDate() <= enddate.getDate()) 
                 )
             });
             setDay(result);
@@ -349,9 +352,7 @@ function Main(datas) {
                         <DatePicker
                             size="lg"
                             value={startdate}
-                            onChange={(date) => {
-                                setStartDate(date);
-                            }}
+                            onChange={(date) => { setStartDate(date); }}
                             startdate={startdate}
                         />
                     </div>
@@ -362,9 +363,7 @@ function Main(datas) {
                         <DatePicker
                             size="lg"
                             value={enddate}
-                            onChange={(date) => {
-                                setEndDate(date);
-                            }}
+                            onChange={(date) => { setEndDate(date); }}
                             enddate={enddate}
                         />
                     </div>

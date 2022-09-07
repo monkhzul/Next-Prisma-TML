@@ -119,8 +119,11 @@ function Main(datas) {
                 }
                 response.then((res) => {
                     if (res.ok) {
+                        setLoading(true)
                         toast("Амжилттай!");
+                               
                         setTimeout(() => {
+                            setLoading(false)
                             window.location.reload();
                         }, 500)
                     }
@@ -134,7 +137,6 @@ function Main(datas) {
             }
         }
         insert();
-
         console.log(ok)
     };
 
@@ -164,10 +166,11 @@ function Main(datas) {
                         }).then((res) => {
                             if (res.ok) {
                                 toast("Амжилттай!");
-                                priceValue.value = '';
+                                priceValue.value = ''; 
+                                
                                 setTimeout(() => {
                                     window.location.reload();
-                                }, 500)
+                                }, 1)
                                 
                             } else {
                                 toast("Амжилтгүй! Буруу өгөгдөл орсон байна.");
@@ -301,7 +304,12 @@ function Main(datas) {
                     </div>
                 </form>
 
-                <ToastContainer />
+                <ToastContainer 
+                       position="top-right"
+                       newestOnTop={false}
+                       closeOnClick
+                       autoClose={1500}
+                />
 
                 <div
                     className={`${style.customerForm} w-full sm:w-1/2 flex justify-around items-center`}

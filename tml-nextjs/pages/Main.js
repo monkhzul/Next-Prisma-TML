@@ -254,7 +254,8 @@ function Main(datas) {
             tradeshopid: day[i].tradeshopid,
             amount: day[i].Amount,
             createDate: day[i].createdate,
-            mmonth: date.getFullYear() + '-' + (date.getMonth() + 1),
+            mmonth: `${date.getDate() < 10 ? date.getFullYear() + '0' + (date.getMonth() + 1) 
+            : date.getFullYear() + (date.getMonth() + 1)}`,
         })
     }
     
@@ -275,7 +276,7 @@ function Main(datas) {
                                 options={options}
                                 onChange={(choice) => setUserChoice(choice)} 
                                 styles={style.reactSelect}
-                                isLoading
+                                isClearable
                             />
                             
                         </div>

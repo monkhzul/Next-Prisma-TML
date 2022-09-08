@@ -86,6 +86,18 @@ function Main(datas) {
         id.push(x.TradeShopId)
     })
 
+    const handleChange = (selectedOption) => {
+        setUserChoice(selectedOption);
+    }
+
+    const loadOptions = (searchValue, callback) => {
+        setTimeout(()=> {
+            const filteredOptions = options.filter((option) => 
+            option.label.toLowerCase().includes(searchValue.toLowerCase()))
+            callback(filteredOptions)
+        }, 2000)
+    }
+
     const handleFileChange = async (event) => {
         const file = event.target.files[0];
         const data = await file.arrayBuffer();
@@ -129,6 +141,7 @@ function Main(datas) {
                     }
                     else {
                         toast("Амжилтгүй! Буруу өгөгдөл орсон байна.");
+                        setLoading(false)
                     }
                 });
             }
@@ -137,13 +150,14 @@ function Main(datas) {
             }
         }
         insert();
-        console.log(ok)
     };
 
     const Send = (e) => {
         e.preventDefault();
         const priceValue = document.getElementById("price")
         const price = priceValue.value;
+
+        console.log(userChoice)
 
         if (userChoice.value != undefined) {
             if (price != '' && price != 0) {
@@ -171,6 +185,7 @@ function Main(datas) {
                                 setLoading(false)
                             } else {
                                 toast("Амжилтгүй! Буруу өгөгдөл орсон байна.");
+                                setLoading(false)
                             }
                         })
                 };
@@ -259,25 +274,6 @@ function Main(datas) {
         })
     }
 
-    const handleChange = (selectedOption) => {
-        setUserChoice(selectedOption);
-    }
-
-    const loadOptions = (searchValue, callback) => {
-        setTimeout(()=> {
-            const filteredOptions = options.filter((option) => 
-            option.label.toLowerCase().includes(searchValue.toLowerCase()))
-            callback(filteredOptions)
-        }, 2000)
-    }
-
-    function select() {
-            setLoadingSelect(true)
-            setTimeout(() => {
-             setLoadingSelect(false)
-            }, 3000)
-    }
-    
     return (
         <div className={`${style.App} p-3`}>
             <div className={`head flex flex-col sm:flex-row w-full`}>
@@ -303,7 +299,6 @@ function Main(datas) {
                                 loadOptions={loadOptions}
                                 onChange={handleChange}
                                 isClearable
-                                openMenuOnClick={() => loadingSelect(true)}
                             />
                             
                         </div>

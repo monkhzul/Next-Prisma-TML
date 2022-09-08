@@ -5,6 +5,7 @@ import * as XLSX from "xlsx";
 import ReactPaginate from "react-paginate";
 import { CSVLink } from "react-csv";
 import Select from "react-select";
+import AsyncSelect from "react-select/async";
 import { ToastContainer, toast } from "react-toastify";
 import style from "../styles/style.module.css";
 import "react-datepicker/dist/react-datepicker.css";
@@ -16,6 +17,7 @@ import { useRouter } from 'next/router';
 function Main(datas) {
     const [data, setData] = useState(datas.data.db);
     const [loading, setLoading] = useState(false)
+    const [loadingSelect, setLoadingSelect] = useState(false)
     const [userChoice, setUserChoice] = useState("");
     const [day, setDay] = useState(datas.data.db);
     const [trade, setTrade] = useState(datas.data.trade);
@@ -23,7 +25,7 @@ function Main(datas) {
     const [options, setOptions] = useState([]);
     const {render, setRender} = datas.render
     const router = useRouter();
-
+      
     useEffect(() => {
        setLoading(true)
        setTimeout(() => {
@@ -101,6 +103,7 @@ function Main(datas) {
             }
 
             if (count == jsonData.length) {
+                setLoading(true)
                 for (var i in jsonData) {
                     var response = fetch("/api/data/insert", {
                         method: "POST",
@@ -119,13 +122,10 @@ function Main(datas) {
                 }
                 response.then((res) => {
                     if (res.ok) {
-                        setLoading(true)
+                        router.reload("/");
                         toast("Амжилттай!");
-                               
-                        setTimeout(() => {
-                            setLoading(false)
-                            window.location.reload();
-                        }, 500)
+
+                        setLoading(false)
                     }
                     else {
                         toast("Амжилтгүй! Буруу өгөгдөл орсон байна.");
@@ -142,14 +142,13 @@ function Main(datas) {
 
     const Send = (e) => {
         e.preventDefault();
-
         const priceValue = document.getElementById("price")
         const price = priceValue.value;
 
         if (userChoice.value != undefined) {
             if (price != '' && price != 0) {
+                setLoading(true)
                 const insert = () => {
-                    
                         fetch("/api/data/insert", {
                             method: "POST",
                             headers: {
@@ -165,13 +164,11 @@ function Main(datas) {
                             }),
                         }).then((res) => {
                             if (res.ok) {
+                                router.reload("/");
                                 toast("Амжилттай!");
                                 priceValue.value = ''; 
-                                
-                                setTimeout(() => {
-                                    window.location.reload();
-                                }, 1)
-                                
+
+                                setLoading(false)
                             } else {
                                 toast("Амжилтгүй! Буруу өгөгдөл орсон байна.");
                             }
@@ -261,6 +258,25 @@ function Main(datas) {
             : date.getFullYear() + (date.getMonth() + 1)}`,
         })
     }
+
+    const handleChange = (selectedOption) => {
+        setUserChoice(selectedOption);
+    }
+
+    const loadOptions = (searchValue, callback) => {
+        setTimeout(()=> {
+            const filteredOptions = options.filter((option) => 
+            option.label.toLowerCase().includes(searchValue.toLowerCase()))
+            callback(filteredOptions)
+        }, 2000)
+    }
+
+    function select() {
+            setLoadingSelect(true)
+            setTimeout(() => {
+             setLoadingSelect(false)
+            }, 3000)
+    }
     
     return (
         <div className={`${style.App} p-3`}>
@@ -275,11 +291,19 @@ function Main(datas) {
                                 Харилцагч
                             </label>
                             
-                            <Select
+                            {/* <Select
                                 options={options}
                                 onChange={(choice) => setUserChoice(choice)} 
                                 styles={style.reactSelect}
                                 isClearable
+                                LoadingMessage={() => 'searching...'}
+                            /> */}
+                            <AsyncSelect
+                                defaultOptions={options}
+                                loadOptions={loadOptions}
+                                onChange={handleChange}
+                                isClearable
+                                openMenuOnClick={() => loadingSelect(true)}
                             />
                             
                         </div>
@@ -296,12 +320,12 @@ function Main(datas) {
                             />
                         </div>
                     </div>
-                    <div
+                    <button
                         className={`border cursor-pointer w-1/3 p-2 my-3 mx-auto font-semibold flex justify-center hover:bg-slate-200`}
                         onClick={Send}
                     >
                         Илгээх
-                    </div>
+                    </button>
                 </form>
 
                 <ToastContainer 

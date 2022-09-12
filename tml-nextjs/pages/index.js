@@ -26,7 +26,7 @@ export default function Home(props) {
 
       <footer className={`${styles.footer}`}>
         <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+          href="#"
           target="_blank"
           rel="noopener noreferrer"
           className='font-bold'
@@ -43,10 +43,10 @@ export default function Home(props) {
 
 export const getServerSideProps = async (context) => {
 
-  const res = await fetch('http://localhost:3001/api/db')
+  const res = await fetch('http://localhost:3000/api/db')
   const db = await res.json()
 
-  const res1 = await fetch('http://localhost:3001/api/trade')
+  const res1 = await fetch('http://localhost:3000/api/trade')
   const trade = await res1.json()
 
   return {

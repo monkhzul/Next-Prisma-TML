@@ -13,16 +13,15 @@ import DatePicker from "rsuite/DatePicker";
 import "rsuite/dist/rsuite.css";
 import ClipLoader from 'react-spinners/PulseLoader'
 import { useRouter } from 'next/router';
+import { route } from 'next/dist/server/router'
  
 function Main(datas) {
     const [data, setData] = useState(datas.data.db);
     const [loading, setLoading] = useState(false)
-    const [loadingSelect, setLoadingSelect] = useState(false)
     const [userChoice, setUserChoice] = useState("");
     const [day, setDay] = useState(datas.data.db);
     const [trade, setTrade] = useState(datas.data.trade);
     const [ok, setOk] = useState("");
-    const [options, setOptions] = useState([]);
     const {render, setRender} = datas.render
     const router = useRouter();
       
@@ -33,23 +32,13 @@ function Main(datas) {
        }, 500)
     }, [])
     
-    // trade.map(trade => {
-    //     options.push({
-    //         value: trade.TradeShopId,
-    //         label: trade.Name,
-    //     });
-    // })
-
     var array = [];
-    useEffect(() => {
-        trade.map(trade => {
+        for (let i = 0; i < trade.length; i++) {
             array.push({
-                value: trade.TradeShopId,
-                label: trade.Name,
+                value: trade[i].TradeShopId,
+                label: trade[i].Name,
             });
-        })
-        setOptions(array)
-    }, [])
+        }
 
     const inputRef = useRef(null);
 
@@ -77,11 +66,9 @@ function Main(datas) {
 
     const handleClick = () => {
         inputRef.current.click();
-        console.log("click");
     };
 
     var id = [];
-
     trade.forEach(x => {
         id.push(x.TradeShopId)
     })
@@ -92,10 +79,10 @@ function Main(datas) {
 
     const loadOptions = (searchValue, callback) => {
         setTimeout(()=> {
-            const filteredOptions = options.filter((option) => 
+            const filteredOptions = array.filter((option) => 
             option.label.toLowerCase().includes(searchValue.toLowerCase()))
             callback(filteredOptions)
-        }, 2000)
+        }, 1000)
     }
 
     const handleFileChange = async (event) => {
@@ -105,7 +92,7 @@ function Main(datas) {
         const worksheet = workbook.Sheets[workbook.SheetNames[0]];
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
-        function insert() {
+        function insertMany() {
 
             var count = 0;
             for (let i = 0; i < jsonData.length; i++) {
@@ -134,9 +121,9 @@ function Main(datas) {
                 }
                 response.then((res) => {
                     if (res.ok) {
-                        router.reload("/");
+                        router.reload();
                         toast("Амжилттай!");
-
+                        // router.reload(router.asPath)
                         setLoading(false)
                     }
                     else {
@@ -149,10 +136,10 @@ function Main(datas) {
                 toast("Харилцагч олдсонгүй! Харилцагчийн ID-гаа шалгана уу!")
             }
         }
-        insert();
+        insertMany();
     };
 
-    const Send = (e) => {
+    const insertOne = (e) => {
         e.preventDefault();
         const priceValue = document.getElementById("price")
         const price = priceValue.value;
@@ -178,8 +165,9 @@ function Main(datas) {
                             }),
                         }).then((res) => {
                             if (res.ok) {
-                                router.reload("/");
+                                router.reload();
                                 toast("Амжилттай!");
+                                // router.reload(router.asPath)
                                 priceValue.value = ''; 
 
                                 setLoading(false)
@@ -201,13 +189,12 @@ function Main(datas) {
     };
 
 
-
     const pageCount = Math.ceil(day.length / perPage);
     const changePage = ({ selected }) => {
         setPageNumber(selected);
     };
 
-    const first = () => {
+    const defaultDate = () => {
             const result = data.filter((d) => {
                 var time = new Date(d.createdate);
                 return (
@@ -215,14 +202,14 @@ function Main(datas) {
                     ( isNaN( startdate ) && time <= enddate ) ||
                     ( startdate <= time && isNaN( enddate ) ) ||
                     ( startdate <= time && time <= enddate ) ||
-                    ( startdate.getDate() <= time.getDate() && time.getDate() <= enddate.getDate()) 
+                    ( startdate.getDate() <= time.getDate() && time.getDate() <= enddate.getDate())
                 );
             });
             setDay(result);
     }
 
     setTimeout(() => {
-        first()
+        defaultDate()
     }, 100)
 
     const chosenDate = () => {
@@ -250,10 +237,10 @@ function Main(datas) {
 
     const display = sortedDesc
         .slice(pagesVisited, pagesVisited + perPage)
-        .map((data, i) => {
+        .map((data, i=1) => {
             return (
                 <tr key={i + 1}>
-                    <td>{i + 1}</td>
+                    <td>{i+1}</td>
                     <td>{data.tradeshopid}</td>
                     <td>{data.Name}</td>
                     <td>{(data.Amount).toLocaleString()} ₮</td>
@@ -295,10 +282,14 @@ function Main(datas) {
                                 LoadingMessage={() => 'searching...'}
                             /> */}
                             <AsyncSelect
-                                defaultOptions={options}
+                                // defaultOptions={options}
+                                defaultOptions
                                 loadOptions={loadOptions}
                                 onChange={handleChange}
                                 isClearable
+                                cacheOptions
+                                placeholder="Харилцагч сонгох ..."
+                                styles={{cursor: "pointer"}} 
                             />
                             
                         </div>
@@ -317,7 +308,7 @@ function Main(datas) {
                     </div>
                     <button
                         className={`border cursor-pointer w-1/3 p-2 my-3 mx-auto font-semibold flex justify-center hover:bg-slate-200`}
-                        onClick={Send}
+                        onClick={insertOne}
                     >
                         Илгээх
                     </button>

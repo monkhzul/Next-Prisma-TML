@@ -368,24 +368,26 @@ function Main(datas) {
             <div
                 className={`flex flex-col justify-end w-full items-center mt-[25%] sm:flex-row sm:mt-0`}
             >
-                <div className="flex items-center justify-start">
-                    <div>
+                <div className="flex items-center justify-center w-full lg:w-[50%] xl:w-[40%]">
+                    <div className="w-full sm:w-1/3">
                         <DatePicker
                             size="lg"
                             value={startdate}
                             onChange={(date) => { setStartDate(date); }}
                             startdate={startdate}
+                            className='w-full'
                         />
                     </div>
                     <div className="flex">
                         <p className="px-2 my-auto mx-auto">to</p>
                     </div>
-                    <div className="">
+                    <div className="w-full sm:w-1/3">
                         <DatePicker
                             size="lg"
                             value={enddate}
                             onChange={(date) => { setEndDate(date); }}
                             enddate={enddate}
+                            className='w-full'
                         />
                     </div>
                 </div>

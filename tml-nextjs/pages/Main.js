@@ -4,7 +4,6 @@ import Image from "next/image";
 import * as XLSX from "xlsx";
 import ReactPaginate from "react-paginate";
 import { CSVLink } from "react-csv";
-import Select from "react-select";
 import AsyncSelect from "react-select/async";
 import { ToastContainer, toast } from "react-toastify";
 import style from "../styles/style.module.css";
@@ -13,7 +12,6 @@ import DatePicker from "rsuite/DatePicker";
 import "rsuite/dist/rsuite.css";
 import ClipLoader from 'react-spinners/PulseLoader'
 import { useRouter } from 'next/router';
-import { route } from 'next/dist/server/router'
  
 function Main(datas) {
     const [data, setData] = useState(datas.data.db);
@@ -21,8 +19,6 @@ function Main(datas) {
     const [userChoice, setUserChoice] = useState("");
     const [day, setDay] = useState(datas.data.db);
     const [trade, setTrade] = useState(datas.data.trade);
-    const [ok, setOk] = useState("");
-    const {render, setRender} = datas.render
     const router = useRouter();
       
     useEffect(() => {
@@ -194,6 +190,12 @@ function Main(datas) {
         setPageNumber(selected);
     };
 
+    useEffect(() => {
+        const start = new Date(startdate).toDateString()
+        const end = new Date(enddate).toDateString()
+        console.log(start, end);
+    }, [])
+
     const defaultDate = () => {
             const result = data.filter((d) => {
                 var time = new Date(d.createdate);
@@ -210,7 +212,7 @@ function Main(datas) {
 
     setTimeout(() => {
         defaultDate()
-    }, 100)
+    }, 500)
 
     const chosenDate = () => {
         if (startdate != null && enddate != null) {
@@ -237,10 +239,10 @@ function Main(datas) {
 
     const display = sortedDesc
         .slice(pagesVisited, pagesVisited + perPage)
-        .map((data, i=1) => {
+        .map((data, i) => {
             return (
-                <tr key={i + 1}>
-                    <td>{i+1}</td>
+                <tr key={i}>
+                    <td>{i + 1}</td>
                     <td>{data.tradeshopid}</td>
                     <td>{data.Name}</td>
                     <td>{(data.Amount).toLocaleString()} ₮</td>
@@ -366,7 +368,7 @@ function Main(datas) {
             <div
                 className={`flex flex-col justify-end w-full items-center mt-[25%] sm:flex-row sm:mt-0`}
             >
-                <div className="flex items-center sm:w-[30%] justify-start">
+                <div className="flex items-center justify-start">
                     <div>
                         <DatePicker
                             size="lg"
@@ -410,10 +412,10 @@ function Main(datas) {
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>TradeShopID</th>
-                            <th>Нэр</th>
+                            <th>Харилцагчийн ID</th>
+                            <th>Харилцагчийн нэр</th>
                             <th>Үнийн дүн</th>
-                            <th>Огноо</th>
+                            <th>Он сар өдөр</th>
                         </tr>
                     </thead>
                     <tbody className={`w-full`}>

@@ -9,9 +9,6 @@ import { useRouter } from 'next/router';
 
 export default function Home(props) {
 
-  const [render, setRender] = useState(false);
-  const router = useRouter();
-
   return (
     <div className={styles.container}>
       <Head>
@@ -21,7 +18,7 @@ export default function Home(props) {
       </Head>
 
       <main className={styles.main}>
-          <Main data = {props} render = {{render, setRender}}/>
+          <Main data = {props}/>
       </main>
 
       <footer className={`${styles.footer}`}>

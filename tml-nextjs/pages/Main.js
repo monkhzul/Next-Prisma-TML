@@ -263,15 +263,26 @@ function Main(datas) {
         })
     }
 
+        // document.querySelector("#price").oninput = (function(e) {
+        //     var input = document.getElementById('price')
+        //     input.name = input.value.replace('')
+        //     if (input.value == "" || input.value == undefined || isNaN(parseInt(input.name)) == true) {
+        //         input.value = 0
+        //         input.name =  "0"
+        //     } else {
+        //         input.value = parseInt(input.name).toLocaleString()
+        //     }      
+        // })
+
     return (
         <div className={`${style.App} p-3`}>
-            <div className={`head flex flex-col sm:flex-row w-full`}>
+            <div className={`head flex flex-col md:flex-row w-full`}>
                 <form
                     action=""
-                    className={`${style.customerForm} flex flex-col w-full sm:w-2/3`}
+                    className={`${style.customerForm} flex flex-col w-full md:w-2/3`}
                 >
-                    <div className={`w-full flex justify-around`}>
-                        <div className={`flex flex-col w-[40%] ${style.customerForm}`}>
+                    <div className={`w-full flex flex-col justify-around md:flex-row`}>
+                        <div className={`flex flex-col w-full md:w-[40%] ${style.customerForm}`}>
                             <label htmlFor="" className="mx-1 my-1 font-semibold">
                                 Харилцагч
                             </label>
@@ -290,20 +301,20 @@ function Main(datas) {
                                 onChange={handleChange}
                                 isClearable
                                 cacheOptions
-                                placeholder="Харилцагч сонгох ..."
+                                placeholder="Харилцагч хайх..."
                                 styles={{cursor: "pointer"}} 
                             />
                             
                         </div>
-                        <div className={`flex flex-col w-[40%] ${style.customerForm}`}>
+                        <div className={`flex flex-col w-full md:w-[40%] ${style.customerForm}`}>
                             <label htmlFor="" className={`mx-1 my-1 font-semibold`}>
                                 Үнийн дүн
                             </label>
                             <input
-                                type="number"
+                                type="text"
                                 name=""
                                 id="price"
-                                className={`border p-2 ${style.price}`}
+                                className={`border p-2 ${style.price} bg-white`}
                                 placeholder="Үнийн дүн"
                             />
                         </div>
@@ -324,7 +335,7 @@ function Main(datas) {
                 />
 
                 <div
-                    className={`${style.customerForm} w-full sm:w-1/2 flex justify-around items-center`}
+                    className={`${style.customerForm} w-full md:w-1/2 sm:mb-5 flex justify-around items-center`}
                 >
                     <input
                         className={`d-none`}
@@ -388,6 +399,7 @@ function Main(datas) {
                             onChange={(date) => { setEndDate(date); }}
                             enddate={enddate}
                             className='w-full'
+                        
                         />
                     </div>
                 </div>
@@ -410,20 +422,22 @@ function Main(datas) {
                                     className={"w-full flex justify-center"}
                                 />
                             </div> : 
-                <Table striped bordered hover>
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Харилцагчийн ID</th>
-                            <th>Харилцагчийн нэр</th>
-                            <th>Үнийн дүн</th>
-                            <th>Он сар өдөр</th>
-                        </tr>
-                    </thead>
-                    <tbody className={`w-full`}>
-                       {display}
-                    </tbody>
-                </Table>
+                <div className="justify-center flex">
+                    <Table striped bordered hover responsive>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Харилцагчийн ID</th>
+                                <th>Харилцагчийн нэр</th>
+                                <th>Үнийн дүн</th>
+                                <th>Он сар өдөр</th>
+                            </tr>
+                        </thead>
+                        <tbody className={`w-full`}>
+                        {display}
+                        </tbody>
+                    </Table>
+                </div>
                 }
                 <ReactPaginate
                     previousLabel={"Previous"}

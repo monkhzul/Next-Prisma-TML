@@ -38,18 +38,19 @@ export default function Home(props) {
   )
 }
 
-export const getServerSideProps = async (context) => {
+export const getStaticProps = async (context) => {
 
-  const res = await fetch('http://localhost:3001/api/db')
+  const res = await fetch('http://122.201.28.39:8081/api/db')
   const db = await res.json()
 
-  const res1 = await fetch('http://localhost:3001/api/trade')
+  const res1 = await fetch('http://122.201.28.39:8081/api/trade')
   const trade = await res1.json()
 
   return {
       props: {
         db: db,
         trade: trade
-      }
+      },
+      revalidate: 30,
   }
 }

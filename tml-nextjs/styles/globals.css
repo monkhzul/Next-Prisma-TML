@@ -36,3 +36,36 @@ a {
 input[type='number']::-webkit-inner-spin-button, input[type='number']::-webkit-outer-spin-button {
   display: none;
 }
+.rs-table {
+  width: 100% !important;
+}
+.table-responsive {
+  width: 90%;
+}
+.rs-pagination-lg .rs-pagination-btn {
+  font-size: 22px !important;
+  min-width: 50px !important;
+}
+.rs-pagination-btn.rs-pagination-btn-active {
+  color: #777a8b !important;
+  border: 1px solid #777a8b !important;
+  background-color: #777a8b !important;
+  color: white !important;
+}
+.rs-pagination-btn:hover, .rs-pagination-btn:focus {
+  background-color: #777a8b !important;
+  color: white !important;
+}
+
+@media (max-width: 640px) {
+  .rs-pagination-group {
+    flex-direction: column;
+    margin: 1rem 0;
+  }
+  .rs-pagination-group-grow {
+    margin: 0.5rem;
+  }
+  .rs-pagination-group-skip {
+    margin: 1rem 0;
+  }
+}

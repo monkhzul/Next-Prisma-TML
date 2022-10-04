@@ -7,59 +7,39 @@ import { CSVLink } from "react-csv";
 import AsyncSelect from "react-select/async";
 import { ToastContainer, toast } from "react-toastify";
 import style from "../styles/style.module.css";
+import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "rsuite/DatePicker";
-import ClipLoader from 'react-spinners/PulseLoader'
-import { useRouter } from 'next/router';
-import { Pagination } from 'rsuite';
 import "rsuite/dist/rsuite.css";
-
-function Main(datas) {
-
-    const { Column, HeaderCell, Cell, Row } = Table;
-    const [limit, setLimit] = useState(10);
-    const [page, setPage] = useState(1);
-
-    const [data, setData] = useState(datas.data.db);
+import ClipLoader from 'react-spinners/PulseLoader';
+import { useRouter } from 'next/router';
+import Database from '../pages/api/db';
+ 
+export default function Test({ res }) {
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false)
     const [userChoice, setUserChoice] = useState("");
-    const [day, setDay] = useState(datas.data.db);
-    const [trade, setTrade] = useState(datas.data.trade);
+    const [day, setDay] = useState([]);
+    const [trade, setTrade] = useState([]);
     const router = useRouter();
-
-    const handleChangeLimit = dataKey => {
-        setPage(1);
-        setLimit(dataKey);
-    };
-
-    const sortedDesc = day.sort(
-        (objA, objB) =>
-            new Date(objB.createdate) - new Date(objA.createdate)
-    );
-
-    const dataTable = sortedDesc.filter((v, i) => {
-        const start = limit * (page - 1);
-        const end = start + limit;
-        return (i >= start && i < end);
-    });
-
+      
     useEffect(() => {
-        console.log(dataTable)
+       setLoading(true)
+       setTimeout(() => {
+        setLoading(false)
+       }, 500)
     }, [])
 
     useEffect(() => {
-        setLoading(true)
-        setTimeout(() => {
-            setLoading(false)
-        }, 500)
+        console.log(res);
     }, [])
-
+    
     var array = [];
-    for (let i = 0; i < trade.length; i++) {
-        array.push({
-            value: trade[i].TradeShopId,
-            label: trade[i].Name,
-        });
-    }
+        for (let i = 0; i < trade.length; i++) {
+            array.push({
+                value: trade[i].TradeShopId,
+                label: trade[i].Name,
+            });
+        }
 
     const inputRef = useRef(null);
 
@@ -99,9 +79,9 @@ function Main(datas) {
     }
 
     const loadOptions = (searchValue, callback) => {
-        setTimeout(() => {
-            const filteredOptions = array.filter((option) =>
-                option.label.toLowerCase().includes(searchValue.toLowerCase()))
+        setTimeout(()=> {
+            const filteredOptions = array.filter((option) => 
+            option.label.toLowerCase().includes(searchValue.toLowerCase()))
             callback(filteredOptions)
         }, 1000)
     }
@@ -171,32 +151,32 @@ function Main(datas) {
             if (price != '' && price != 0) {
                 setLoading(true)
                 const insert = () => {
-                    fetch("/api/data/insert", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            tradeshopid: `${userChoice.value}`,
-                            mmonth: `${date.getFullYear() + '-' + (date.getMonth() + 1)}`,
-                            discounttype: "6",
-                            Amount: price,
-                            state: 0,
-                            createUser: "",
-                        }),
-                    }).then((res) => {
-                        if (res.ok) {
-                            router.reload();
-                            toast("Амжилттай!");
-                            // router.reload(router.asPath)
-                            priceValue.value = '';
+                        fetch("/api/data/insert", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                tradeshopid: `${userChoice.value}`,
+                                mmonth: `${date.getFullYear() + '-' + (date.getMonth() + 1)}`,
+                                discounttype: "6",
+                                Amount: price,
+                                state: 0,
+                                createUser: "",
+                            }),
+                        }).then((res) => {
+                            if (res.ok) {
+                                router.reload();
+                                toast("Амжилттай!");
+                                // router.reload(router.asPath)
+                                priceValue.value = ''; 
 
-                            setLoading(false)
-                        } else {
-                            toast("Амжилтгүй! Буруу өгөгдөл орсон байна.");
-                            setLoading(false)
-                        }
-                    })
+                                setLoading(false)
+                            } else {
+                                toast("Амжилтгүй! Буруу өгөгдөл орсон байна.");
+                                setLoading(false)
+                            }
+                        })
                 };
                 insert();
             }
@@ -218,21 +198,20 @@ function Main(datas) {
     useEffect(() => {
         const start = new Date(startdate).toDateString()
         const end = new Date(enddate).toDateString()
-        console.log(start, end);
     }, [])
 
     const defaultDate = () => {
-        const result = data.filter((d) => {
-            var time = new Date(d.createdate);
-            return (
-                (isNaN(startdate) && isNaN(enddate)) ||
-                (isNaN(startdate) && time <= enddate) ||
-                (startdate <= time && isNaN(enddate)) ||
-                (startdate <= time && time <= enddate) ||
-                (startdate.getDate() <= time.getDate() && time.getDate() <= enddate.getDate())
-            );
-        });
-        setDay(result);
+            const result = data.filter((d) => {
+                var time = new Date(d.createdate);
+                return (
+                    ( isNaN( startdate ) && isNaN( enddate ) ) ||
+                    ( isNaN( startdate ) && time <= enddate ) ||
+                    ( startdate <= time && isNaN( enddate ) ) ||
+                    ( startdate <= time && time <= enddate ) ||
+                    ( startdate.getDate() <= time.getDate() && time.getDate() <= enddate.getDate())
+                );
+            });
+            setDay(result);
     }
 
     setTimeout(() => {
@@ -244,11 +223,11 @@ function Main(datas) {
             const result = data.filter((d) => {
                 var time = new Date(d.createdate);
                 return (
-                    (isNaN(startdate) && isNaN(enddate)) ||
-                    (isNaN(startdate) && time <= enddate) ||
-                    (startdate <= time && isNaN(enddate)) ||
-                    (startdate <= time && time <= enddate) ||
-                    (startdate.getDate() <= time.getDate() && time.getDate() <= enddate.getDate())
+                    ( isNaN( startdate ) && isNaN( enddate ) ) ||
+                    ( isNaN( startdate ) && time <= enddate ) ||
+                    ( startdate <= time && isNaN( enddate ) ) ||
+                    ( startdate <= time && time <= enddate ) ||
+                    ( startdate.getDate() <= time.getDate() && time.getDate() <= enddate.getDate()) 
                 )
             });
             setDay(result);
@@ -257,12 +236,17 @@ function Main(datas) {
         }
     };
 
-    const display = dataTable
-        // .slice(pagesVisited, pagesVisited + perPage)
+    const sortedDesc = day.sort(
+        (objA, objB) =>
+            new Date(objB.createdate) - new Date(objA.createdate)
+    );
+
+    const display = sortedDesc
+        .slice(pagesVisited, pagesVisited + perPage)
         .map((data, i) => {
             return (
                 <tr key={i}>
-                    <td>{i+1}</td>
+                    <td>{i + 1}</td>
                     <td>{data.tradeshopid}</td>
                     <td>{data.Name}</td>
                     <td>{(data.Amount).toLocaleString()} ₮</td>
@@ -278,36 +262,24 @@ function Main(datas) {
             tradeshopid: day[i].tradeshopid,
             amount: day[i].Amount,
             createDate: day[i].createdate,
-            mmonth: `${date.getDate() < 10 ? date.getFullYear() + '0' + (date.getMonth() + 1)
-                : date.getFullYear() + (date.getMonth() + 1)}`,
+            mmonth: `${date.getDate() < 10 ? date.getFullYear() + '0' + (date.getMonth() + 1) 
+            : date.getFullYear() + (date.getMonth() + 1)}`,
         })
     }
 
-    // document.querySelector("#price").oninput = (function(e) {
-    //     var input = document.getElementById('price')
-    //     input.name = input.value.replace('')
-    //     if (input.value == "" || input.value == undefined || isNaN(parseInt(input.name)) == true) {
-    //         input.value = 0
-    //         input.name =  "0"
-    //     } else {
-    //         input.value = parseInt(input.name).toLocaleString()
-    //     }      
-    // })
-
-    var i = 1;
     return (
         <div className={`${style.App} p-3`}>
-            <div className={`head flex flex-col md:flex-row w-full`}>
+            <div className={`head flex flex-col sm:flex-row w-full`}>
                 <form
                     action=""
-                    className={`${style.customerForm} flex flex-col w-full md:w-2/3`}
+                    className={`${style.customerForm} flex flex-col w-full sm:w-2/3`}
                 >
-                    <div className={`w-full flex flex-col justify-around md:flex-row`}>
-                        <div className={`flex flex-col w-full md:w-[40%] ${style.customerForm}`}>
+                    <div className={`w-full flex justify-around`}>
+                        <div className={`flex flex-col w-[40%] ${style.customerForm}`}>
                             <label htmlFor="" className="mx-1 my-1 font-semibold">
                                 Харилцагч
                             </label>
-
+                            
                             {/* <Select
                                 options={options}
                                 onChange={(choice) => setUserChoice(choice)} 
@@ -322,20 +294,20 @@ function Main(datas) {
                                 onChange={handleChange}
                                 isClearable
                                 cacheOptions
-                                placeholder="Харилцагч хайх..."
-                                styles={{ cursor: "pointer" }}
+                                placeholder="Харилцагч сонгох ..."
+                                styles={{cursor: "pointer"}} 
                             />
-
+                            
                         </div>
-                        <div className={`flex flex-col w-full md:w-[40%] ${style.customerForm}`}>
+                        <div className={`flex flex-col w-[40%] ${style.customerForm}`}>
                             <label htmlFor="" className={`mx-1 my-1 font-semibold`}>
                                 Үнийн дүн
                             </label>
                             <input
-                                type="text"
+                                type="number"
                                 name=""
                                 id="price"
-                                className={`border p-2 ${style.price} bg-white`}
+                                className={`border p-2 ${style.price}`}
                                 placeholder="Үнийн дүн"
                             />
                         </div>
@@ -348,15 +320,15 @@ function Main(datas) {
                     </button>
                 </form>
 
-                <ToastContainer
-                    position="top-right"
-                    newestOnTop={false}
-                    closeOnClick
-                    autoClose={1500}
+                <ToastContainer 
+                       position="top-right"
+                       newestOnTop={false}
+                       closeOnClick
+                       autoClose={1500}
                 />
 
                 <div
-                    className={`${style.customerForm} w-full md:w-1/2 sm:mb-5 flex justify-around items-center`}
+                    className={`${style.customerForm} w-full sm:w-1/2 flex justify-around items-center`}
                 >
                     <input
                         className={`d-none`}
@@ -408,7 +380,6 @@ function Main(datas) {
                             onChange={(date) => { setStartDate(date); }}
                             startdate={startdate}
                             className='w-full'
-                            oneTap
                         />
                     </div>
                     <div className="flex">
@@ -421,7 +392,6 @@ function Main(datas) {
                             onChange={(date) => { setEndDate(date); }}
                             enddate={enddate}
                             className='w-full'
-                            oneTap
                         />
                     </div>
                 </div>
@@ -437,56 +407,29 @@ function Main(datas) {
 
             <div className={`body mt-5`}>
                 {loading ? <div className="flex">
-                    <ClipLoader
-                        size={20}
-                        color={"#3dbee3"}
-                        loading={loading}
-                        className={"w-full flex justify-center"}
-                    />
-                </div> :
-                    <div className="justify-center flex w-full">
-                        <Table bordered hover responsive>
-                        <thead className="bg-gray-100">
-                            <tr>
-                                <th>#</th>
-                                <th className="teble-fixed">Харилцагчийн ID</th>
-                                <th>Харилцагчийн нэр</th>
-                                <th>Үнийн дүн</th>
-                                <th>Он сар өдөр</th>
-                            </tr>
-                        </thead>
-                        <tbody className={`w-full`}>
-                        {display != '' ? display :  <tr className="text-center font-semibold text-base">
-                                    <td className="border-none"></td>
-                                    <td className="border-none"></td>
-                                    <td className="border-none">Өгөгдөл байхгүй байна.</td>
-                                    <td className="border-none"></td>
-                                    <td className="border-none"></td>
-                                </tr>}
-                        </tbody>
-                    </Table>
-                        {/* <Table height={500} data={dataTable} className="mx-auto border">
-                            <Column width={150} align="center" fixed className='font-semibold'>
-                                <HeaderCell>Харилцагчийн ID</HeaderCell>
-                                <Cell dataKey="tradeshopid" />
-                            </Column>
-                            <Column width={300} className='font-semibold'>
-                                <HeaderCell>Харилцагчийн нэр</HeaderCell>
-                                <Cell dataKey="Name" />
-                            </Column>
-                            <Column width={150} className='font-semibold'>
-                                <HeaderCell>Үнийн дүн</HeaderCell>
-                                <Cell dataKey="Amount"></Cell>
-                            </Column>
-                            <Column width={300} className='text-center font-semibold'>
-                                <HeaderCell>Огноо</HeaderCell>
-                                <Cell dataKey="createdate" />
-                            </Column>
-                        </Table> */}
-                        
-                    </div>
+                                <ClipLoader 
+                                    size={20}
+                                    color={"#3dbee3"}
+                                    loading={loading}
+                                    className={"w-full flex justify-center"}
+                                />
+                            </div> : 
+                <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Харилцагчийн ID</th>
+                            <th>Харилцагчийн нэр</th>
+                            <th>Үнийн дүн</th>
+                            <th>Он сар өдөр</th>
+                        </tr>
+                    </thead>
+                    <tbody className={`w-full`}>
+                       {display}
+                    </tbody>
+                </Table>
                 }
-                {/* <ReactPaginate
+                <ReactPaginate
                     previousLabel={"Previous"}
                     nextLabel={"Next"}
                     pageCount={pageCount}
@@ -496,28 +439,26 @@ function Main(datas) {
                     nextLinkClassName={style.nextBttn}
                     disabledClassName={style.paginationDisabled}
                     activeClassName={style.paginationActive}
-                /> */}
-                <Pagination
-                    prev
-                    next
-                    first
-                    last
-                    ellipsis
-                    boundaryLinks
-                    maxButtons={5}
-                    size="md"
-                    layout={['total', '-', 'pager', 'skip']}
-                    total={day.length}
-                    limitOptions={[10, 30, 50]}
-                    limit={limit}
-                    activePage={page}
-                    onChangePage={setPage}
-                    onChangeLimit={handleChangeLimit}
                 />
             </div>
         </div>
     );
 }
 
-export default Main
+export async function getServerSideProps(context) {
+
+    // const res = await fetch('http://localhost:3000/api/db')
+    const res = Database();
+    const db = await res.json()
+  
+    // const res1 = await fetch('http://localhost:3000/api/trade')
+    // const trade = await res1.json()
+  
+    return {
+        props: {
+          res
+        }
+    }
+}
+  
 

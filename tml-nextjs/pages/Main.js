@@ -283,18 +283,31 @@ function Main(datas) {
         })
     }
 
-    // document.querySelector("#price").oninput = (function(e) {
-    //     var input = document.getElementById('price')
-    //     input.name = input.value.replace('')
-    //     if (input.value == "" || input.value == undefined || isNaN(parseInt(input.name)) == true) {
-    //         input.value = 0
-    //         input.name =  "0"
-    //     } else {
-    //         input.value = parseInt(input.name).toLocaleString()
-    //     }      
-    // })
+    if (typeof document !== "undefined") {
+    
+        document.querySelector("input").oninput = (function(e) {
+            var input = document.getElementById('price').value
+            // input.name = input.value.replace('')
+            // if (input.value == "" || input.value == undefined || isNaN(parseInt(input.name)) == true) {
+            //     input.value = 0
+            //     input.name =  "0"
+            // } else {
+                console.log(input)
+                input.value = (input.value).toLocaleString()
+            // }      
+        })
+    }
+
+
+    
 
     var i = 1;
+
+    function Price() {
+        var input = document?.getElementById('price').value;
+        input.toLocaleString()
+    }
+
     return (
         <div className={`${style.App} p-3`}>
             <div className={`head flex flex-col md:flex-row w-full`}>
@@ -332,7 +345,7 @@ function Main(datas) {
                                 Үнийн дүн
                             </label>
                             <input
-                                type="text"
+                                type="number"
                                 name=""
                                 id="price"
                                 className={`border p-2 ${style.price} bg-white`}

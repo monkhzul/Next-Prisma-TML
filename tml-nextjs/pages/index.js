@@ -36,10 +36,14 @@ export default function Home(props) {
   )
 }
 
-export const getStaticProps = async (context) => {
+export const getServerSideProps = async ({ req, res }) => {
+  res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=10, stale-while-revalidate=59'
+  )
 
-  const res = await fetch('http://122.201.28.39:8081/api/db')
-  const db = await res.json()
+  const response = await fetch('http://122.201.28.39:8081/api/db')
+  const db = await response.json()
 
   const res1 = await fetch('http://122.201.28.39:8081/api/trade')
   const trade = await res1.json()

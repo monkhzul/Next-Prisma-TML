@@ -6,7 +6,7 @@ import ReactPaginate from "react-paginate";
 import { CSVLink } from "react-csv";
 import AsyncSelect from "react-select/async";
 import { ToastContainer, toast } from "react-toastify";
-import style from "../styles/style.module.css";
+import style from "../../styles/style.module.css";
 import DatePicker from "rsuite/DatePicker";
 import ClipLoader from 'react-spinners/PulseLoader'
 import { useRouter } from 'next/router';
@@ -67,18 +67,6 @@ function Main(datas) {
     var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
     const [startdate, setStartDate] = useState(firstDay);
     const [enddate, setEndDate] = useState(date);
-
-    // useEffect(() => {
-    //     const get = async () => {
-    //         setLoading(true)
-    //         const req = await fetch("/api/db");
-    //         const res = await req.json();
-    //         setData(res);
-    //         setDay(res);
-    //         setLoading(false)
-    //     };
-    //     get();
-    // }, []);
 
     const [pageNumber, setPageNumber] = useState(0);
 
@@ -186,7 +174,8 @@ function Main(datas) {
                         }),
                     }).then((res) => {
                         if (res.ok) {
-                            router.reload();
+                            // router.reload();
+                            setInterval(router.reload(), 1)
                             toast("Амжилттай!");
                             // router.reload(router.asPath)
                             priceValue.value = '';
@@ -339,21 +328,21 @@ function Main(datas) {
                             />
 
                         </div>
-                        <div className={`flex flex-col w-full md:w-[40%] ${style.customerForm}`}>
+                        <div className={`flex flex-col w-full md:w-[40%] customerForm ${style.customerForm}`}>
                             <label htmlFor="" className={`mx-1 my-1 font-semibold`}>
                                 Үнийн дүн
                             </label>
                             <input
-                                type="number"
+                                type="text"
                                 name=""
                                 id="price"
-                                className={`border p-2 ${style.price} bg-white`}
+                                className={`p-2 ${style.price} bg-white`}
                                 placeholder="Үнийн дүн"
                             />
                         </div>
                     </div>
                     <button
-                        className={`border cursor-pointer w-1/3 p-2 my-3 mx-auto font-semibold flex justify-center hover:bg-slate-200`}
+                        className={`border bg-gray-200 cursor-pointer w-1/3 p-2 my-3 mx-auto font-semibold flex justify-center hover:bg-[#777a8b] hover:text-gray-100`}
                         onClick={insertOne}
                     >
                         Илгээх
@@ -535,3 +524,24 @@ function Main(datas) {
 
 export default Main
 
+
+// export const getServerSideProps = async ({ req, res }) => {
+//     res.setHeader(
+//       'Cache-Control',
+//       'public, s-maxage=10, stale-while-revalidate=59'
+//     )
+  
+//     const response = await fetch('http://122.201.28.39:8081/api/db')
+//     const db = await response.json()
+  
+//     const res1 = await fetch('http://122.201.28.39:8081/api/trade')
+//     const trade = await res1.json()
+  
+//     return {
+//         props: {
+//           db: db,
+//           trade: trade
+//         }
+//     }
+//   }
+  

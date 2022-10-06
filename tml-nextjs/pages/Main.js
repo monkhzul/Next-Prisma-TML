@@ -283,23 +283,21 @@ function Main(datas) {
         })
     }
 
-    if (typeof document !== "undefined") {
+    // if (typeof document !== "undefined") {
     
-        document.querySelector("input").oninput = (function(e) {
-            var input = document.getElementById('price').value
-            // input.name = input.value.replace('')
-            // if (input.value == "" || input.value == undefined || isNaN(parseInt(input.name)) == true) {
-            //     input.value = 0
-            //     input.name =  "0"
-            // } else {
-                console.log(input)
-                input.value = (input.value).toLocaleString()
-            // }      
-        })
-    }
-
-
-    
+    //     document.querySelector("input").oninput = (function(e) {
+    //         var input = document.getElementById('price').value
+    //         input.name = input.value.replace('')
+    //         if (input.value == "" || input.value == undefined || isNaN(parseInt(input.name)) == true) {
+    //             input.value = 0
+    //             input.name =  "0"
+    //         } else {
+    //             const encode = string => string.match(/(\d{2})(\d{2})(\d{3})/).slice(1).join(',');
+    //         }   
+            
+    //         console.log(encode)
+    //     })
+    // }
 
     var i = 1;
 
@@ -308,12 +306,13 @@ function Main(datas) {
         input.toLocaleString()
     }
 
+
     return (
         <div className={`${style.App} p-3`}>
-            <div className={`head flex flex-col md:flex-row w-full`}>
+            <div className={`head flex flex-col xl:flex-row w-full `}>
                 <form
                     action=""
-                    className={`${style.customerForm} flex flex-col w-full md:w-2/3`}
+                    className={`${style.customerForm} flex flex-col w-full`}
                 >
                     <div className={`w-full flex flex-col justify-around md:flex-row`}>
                         <div className={`flex flex-col w-full md:w-[40%] ${style.customerForm}`}>
@@ -369,7 +368,7 @@ function Main(datas) {
                 />
 
                 <div
-                    className={`${style.customerForm} w-full md:w-1/2 sm:mb-5 flex justify-around items-center`}
+                    className={`${style.customerForm} w-full xl:w-1/2 sm:mb-5 flex justify-around items-center`}
                 >
                     <input
                         className={`d-none`}
@@ -382,7 +381,7 @@ function Main(datas) {
                     <button
                         type="file"
                         id="fileSelect"
-                        className="border lg:h-[30%] w-[40%] px-3 font-semibold hover:bg-slate-200"
+                        className="border lg:h-[30%] w-[20%] xl:w-[40%] py-1 px-3 font-semibold hover:bg-slate-200"
                         onClick={handleClick}
                     >
                         Листээр оруулах
@@ -390,7 +389,7 @@ function Main(datas) {
 
                     <button
                         type="submit"
-                        className={`border lg:h-[30%] w-[40%] px-3 flex items-center hover:bg-green-200 bg-slate-200`}
+                        className={`border lg:h-[30%] w-[25%] xl:w-[40%] py-1 px-3 flex items-center hover:bg-green-200 bg-slate-200`}
                     >
                         <CSVLink
                             data={arr}
@@ -422,6 +421,7 @@ function Main(datas) {
                             startdate={startdate}
                             className='w-full'
                             oneTap
+                            cleanable={false}
                         />
                     </div>
                     <div className="flex">
@@ -435,6 +435,7 @@ function Main(datas) {
                             enddate={enddate}
                             className='w-full'
                             oneTap
+                            cleanable={false}
                         />
                     </div>
                 </div>

@@ -44,3 +44,7 @@
   .reactSelect {
     cursor: pointer !important;
   }
+
+  @media (min-width: 767px) {
+    
+  }

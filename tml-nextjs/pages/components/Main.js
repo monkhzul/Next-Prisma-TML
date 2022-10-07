@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import Table from "react-bootstrap/Table";
 import Image from "next/image";
 import * as XLSX from "xlsx";
@@ -13,10 +13,17 @@ import { useRouter } from 'next/router';
 import { Pagination } from 'rsuite';
 import "rsuite/dist/rsuite.css";
 
-function Main(datas) {
+export default function Main(datas) {
+
+    useEffect(() => {
+        console.log(datas)
+    },[])
+
+    const router = useRouter();
 
     const { Column, HeaderCell, Cell, Row } = Table;
-    const [limit, setLimit] = useState(10);
+    const {render, setRender} = datas.render;
+    const [limit, setLimit] = useState(15);
     const [page, setPage] = useState(1);
 
     const [data, setData] = useState(datas.data.db);
@@ -24,7 +31,6 @@ function Main(datas) {
     const [userChoice, setUserChoice] = useState("");
     const [day, setDay] = useState(datas.data.db);
     const [trade, setTrade] = useState(datas.data.trade);
-    const router = useRouter();
 
     const handleChangeLimit = dataKey => {
         setPage(1);
@@ -41,10 +47,6 @@ function Main(datas) {
         const end = start + limit;
         return (i >= start && i < end);
     });
-
-    useEffect(() => {
-        console.log(dataTable)
-    }, [])
 
     useEffect(() => {
         setLoading(true)
@@ -175,9 +177,7 @@ function Main(datas) {
                     }).then((res) => {
                         if (res.ok) {
                             // router.reload();
-                            setInterval(router.reload(), 1)
                             toast("Амжилттай!");
-                            // router.reload(router.asPath)
                             priceValue.value = '';
 
                             setLoading(false)
@@ -186,6 +186,7 @@ function Main(datas) {
                             setLoading(false)
                         }
                     })
+                    .finally(() => setRender(!render))
                 };
                 insert();
             }
@@ -207,7 +208,6 @@ function Main(datas) {
     useEffect(() => {
         const start = new Date(startdate).toDateString()
         const end = new Date(enddate).toDateString()
-        console.log(start, end);
     }, [])
 
     const defaultDate = () => {
@@ -370,7 +370,7 @@ function Main(datas) {
                     <button
                         type="file"
                         id="fileSelect"
-                        className="border lg:h-[30%] w-[20%] xl:w-[40%] py-1 px-3 font-semibold hover:bg-slate-200"
+                        className="border lg:h-[30%] w-[20%] xl:w-[40%] py-1 px-3 font-semibold hover:bg-[#648a7b] bg-slate-200 hover:text-white"
                         onClick={handleClick}
                     >
                         Листээр оруулах
@@ -378,12 +378,12 @@ function Main(datas) {
 
                     <button
                         type="submit"
-                        className={`border lg:h-[30%] w-[25%] xl:w-[40%] py-1 px-3 flex items-center hover:bg-green-200 bg-slate-200`}
+                        className={`border lg:h-[30%] w-[25%] xl:w-[40%] py-1 px-3 flex items-center hover:bg-[#648a7b] bg-slate-200 hover:text-white`}
                     >
                         <CSVLink
                             data={arr}
                             filename="TML.csv"
-                            className={`text-black font-semibold no-underline w-full flex justify-center`}
+                            className={`text-black hover:text-gray-50 font-semibold no-underline w-full flex justify-center`}
                         >
                             <Image
                                 src="/excel.svg"
@@ -392,7 +392,7 @@ function Main(datas) {
                                 height={10}
                                 className={`p-1 sm:p-0 mr-2`}
                             />
-                            <p className={`my-auto font-semibold`}> Export To Excel </p>
+                            <p className={`my-auto font-semibold hover:text-white`}> Export To Excel </p>
                         </CSVLink>
                     </button>
                 </div>
@@ -522,26 +522,15 @@ function Main(datas) {
     );
 }
 
-export default Main
-
-
-// export const getServerSideProps = async ({ req, res }) => {
-//     res.setHeader(
-//       'Cache-Control',
-//       'public, s-maxage=10, stale-while-revalidate=59'
-//     )
-  
-//     const response = await fetch('http://122.201.28.39:8081/api/db')
+// export async function getServerSideProps() {
+//     const response = await fetch('http://localhost:3000/api/db')
 //     const db = await response.json()
   
-//     const res1 = await fetch('http://122.201.28.39:8081/api/trade')
+//     const res1 = await fetch('http://localhost:3000/api/trade')
 //     const trade = await res1.json()
   
 //     return {
-//         props: {
-//           db: db,
-//           trade: trade
-//         }
+//         props: { db: db }
 //     }
-//   }
-  
+// }
+

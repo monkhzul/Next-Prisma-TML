@@ -12,6 +12,8 @@ import ClipLoader from 'react-spinners/PulseLoader'
 import { useRouter } from 'next/router';
 import { Pagination } from 'rsuite';
 import "rsuite/dist/rsuite.css";
+import $ from 'jquery'
+import Head from 'next/head'
 
 export default function Main(datas) {
 
@@ -288,16 +290,25 @@ export default function Main(datas) {
     //     })
     // }
 
+    
+    // $('input#price').keyup(function(event) {
+      
+    //     // format number
+    //     $(this).val(function(index, value) {
+    //       return value
+    //       .replace(/\D/g, "")
+    //       .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    //       ;
+    //     });
+    //   });
+
     var i = 1;
 
-    function Price() {
-        var input = document?.getElementById('price').value;
-        input.toLocaleString()
-    }
-
-
     return (
-        <div className={`${style.App} p-3`}>
+        <div className={`${style.App} p-3 bg-slate-50`}>
+            <Head>
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+            </Head>
             <div className={`head flex flex-col xl:flex-row w-full `}>
                 <form
                     action=""

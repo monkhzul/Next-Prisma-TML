@@ -370,7 +370,7 @@ export default function Main(datas) {
                     <button
                         type="file"
                         id="fileSelect"
-                        className="border lg:h-[30%] w-[20%] xl:w-[40%] py-1 px-3 font-semibold hover:bg-[#648a7b] bg-slate-200 hover:text-white"
+                        className="border lg:h-[30%] w-[40%] sm:w-[20%] xl:w-[40%] py-1 px-3 font-semibold hover:bg-[#648a7b] bg-slate-200 hover:text-white"
                         onClick={handleClick}
                     >
                         Листээр оруулах
@@ -378,7 +378,7 @@ export default function Main(datas) {
 
                     <button
                         type="submit"
-                        className={`border lg:h-[30%] w-[25%] xl:w-[40%] py-1 px-3 flex items-center hover:bg-[#648a7b] bg-slate-200 hover:text-white`}
+                        className={`border lg:h-[30%] w-[50%] sm:w-[25%] xl:w-[40%] py-1 px-3 flex items-center hover:bg-[#648a7b] bg-slate-200 hover:text-white`}
                     >
                         <CSVLink
                             data={arr}

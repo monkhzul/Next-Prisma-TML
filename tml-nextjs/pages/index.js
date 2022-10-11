@@ -36,11 +36,6 @@ export default function Home(props) {
 }
 
 export const getServerSideProps = async ({ req, res }) => {
-  res.setHeader(
-    'Cache-Control',
-    'public, s-maxage=10, stale-while-revalidate=59'
-  )
-
   const response = await fetch('http://localhost:3000/api/db')
   const db = await response.json()
 

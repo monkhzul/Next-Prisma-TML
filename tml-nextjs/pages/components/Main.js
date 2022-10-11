@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Table from "react-bootstrap/Table";
 import Image from "next/image";
 import * as XLSX from "xlsx";
@@ -12,20 +12,14 @@ import ClipLoader from 'react-spinners/PulseLoader'
 import { useRouter } from 'next/router';
 import { Pagination } from 'rsuite';
 import "rsuite/dist/rsuite.css";
-import $ from 'jquery'
 import Head from 'next/head'
 
 export default function Main(datas) {
-
-    useEffect(() => {
-        console.log(datas)
-    },[])
-
     const router = useRouter();
 
     const { Column, HeaderCell, Cell, Row } = Table;
     const {render, setRender} = datas.render;
-    const [limit, setLimit] = useState(15);
+    const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
 
     const [data, setData] = useState(datas.data.db);
@@ -134,9 +128,8 @@ export default function Main(datas) {
                 }
                 response.then((res) => {
                     if (res.ok) {
-                        router.reload();
+                        router.reload(router.asPath)
                         toast("Амжилттай!");
-                        // router.reload(router.asPath)
                         setLoading(false)
                     }
                     else {
@@ -178,7 +171,7 @@ export default function Main(datas) {
                         }),
                     }).then((res) => {
                         if (res.ok) {
-                            // router.reload();
+                            router.reload(router.asPath)
                             toast("Амжилттай!");
                             priceValue.value = '';
 
@@ -207,11 +200,6 @@ export default function Main(datas) {
         setPageNumber(selected);
     };
 
-    useEffect(() => {
-        const start = new Date(startdate).toDateString()
-        const end = new Date(enddate).toDateString()
-    }, [])
-
     const defaultDate = () => {
         const result = data.filter((d) => {
             var time = new Date(d.createdate);
@@ -230,28 +218,7 @@ export default function Main(datas) {
         defaultDate()
     }, 500)
 
-    const chosenDate = () => {
-        if (startdate != null && enddate != null) {
-            const result = data.filter((d) => {
-                var time = new Date(d.createdate);
-                return (
-                    (isNaN(startdate) && isNaN(enddate)) ||
-                    (isNaN(startdate) && time <= enddate) ||
-                    (startdate <= time && isNaN(enddate)) ||
-                    (startdate <= time && time <= enddate) ||
-                    (startdate.getDate() <= time.getDate() && time.getDate() <= enddate.getDate())
-                )
-            });
-            setDay(result);
-        } else {
-            toast("Огноог оруулна уу!")
-        }
-    };
-
-    const display = dataTable
-        // .slice(pagesVisited, pagesVisited + perPage)
-        .map((data, i) => {
-            return (
+    const display = dataTable.map((data, i) => 
                 <tr key={i}>
                     <td>{i+1}</td>
                     <td>{data.tradeshopid}</td>
@@ -260,7 +227,6 @@ export default function Main(datas) {
                     <td>{data.createdate}</td>
                 </tr>
             );
-        });
 
     const arr = [];
 
@@ -274,41 +240,10 @@ export default function Main(datas) {
         })
     }
 
-    // if (typeof document !== "undefined") {
-    
-    //     document.querySelector("input").oninput = (function(e) {
-    //         var input = document.getElementById('price').value
-    //         input.name = input.value.replace('')
-    //         if (input.value == "" || input.value == undefined || isNaN(parseInt(input.name)) == true) {
-    //             input.value = 0
-    //             input.name =  "0"
-    //         } else {
-    //             const encode = string => string.match(/(\d{2})(\d{2})(\d{3})/).slice(1).join(',');
-    //         }   
-            
-    //         console.log(encode)
-    //     })
-    // }
-
-    
-    // $('input#price').keyup(function(event) {
-      
-    //     // format number
-    //     $(this).val(function(index, value) {
-    //       return value
-    //       .replace(/\D/g, "")
-    //       .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-    //       ;
-    //     });
-    //   });
-
     var i = 1;
 
     return (
         <div className={`${style.App} p-3 bg-slate-50`}>
-            <Head>
-                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-            </Head>
             <div className={`head flex flex-col xl:flex-row w-full `}>
                 <form
                     action=""
@@ -320,15 +255,7 @@ export default function Main(datas) {
                                 Харилцагч
                             </label>
 
-                            {/* <Select
-                                options={options}
-                                onChange={(choice) => setUserChoice(choice)} 
-                                styles={style.reactSelect}
-                                isClearable
-                                LoadingMessage={() => 'searching...'}
-                            /> */}
                             <AsyncSelect
-                                // defaultOptions={options}
                                 defaultOptions
                                 loadOptions={loadOptions}
                                 onChange={handleChange}
@@ -440,13 +367,6 @@ export default function Main(datas) {
                     </div>
                 </div>
 
-                {/* <div
-          className={`flex px-4 py-1 ml-5 rounded-md bg-slate-200 font-semibold text-gray-600
-                                                 hover:text-white hover:bg-slate-600 mt-[5%] sm:mt-0 cursor-pointer`}
-          onClick={chosenDate}
-        >
-          Харах
-        </div> */}
             </div>
 
             <div className={`body mt-5`}>
@@ -479,38 +399,10 @@ export default function Main(datas) {
                                 </tr>}
                         </tbody>
                     </Table>
-                        {/* <Table height={500} data={dataTable} className="mx-auto border">
-                            <Column width={150} align="center" fixed className='font-semibold'>
-                                <HeaderCell>Харилцагчийн ID</HeaderCell>
-                                <Cell dataKey="tradeshopid" />
-                            </Column>
-                            <Column width={300} className='font-semibold'>
-                                <HeaderCell>Харилцагчийн нэр</HeaderCell>
-                                <Cell dataKey="Name" />
-                            </Column>
-                            <Column width={150} className='font-semibold'>
-                                <HeaderCell>Үнийн дүн</HeaderCell>
-                                <Cell dataKey="Amount"></Cell>
-                            </Column>
-                            <Column width={300} className='text-center font-semibold'>
-                                <HeaderCell>Огноо</HeaderCell>
-                                <Cell dataKey="createdate" />
-                            </Column>
-                        </Table> */}
                         
                     </div>
                 }
-                {/* <ReactPaginate
-                    previousLabel={"Previous"}
-                    nextLabel={"Next"}
-                    pageCount={pageCount}
-                    onPageChange={changePage}
-                    containerClassName={style.paginationBttns}
-                    previousLinkClassName={style.previousBttn}
-                    nextLinkClassName={style.nextBttn}
-                    disabledClassName={style.paginationDisabled}
-                    activeClassName={style.paginationActive}
-                /> */}
+        
                 <Pagination
                     prev
                     next
@@ -532,16 +424,4 @@ export default function Main(datas) {
         </div>
     );
 }
-
-// export async function getServerSideProps() {
-//     const response = await fetch('http://localhost:3000/api/db')
-//     const db = await response.json()
-  
-//     const res1 = await fetch('http://localhost:3000/api/trade')
-//     const trade = await res1.json()
-  
-//     return {
-//         props: { db: db }
-//     }
-// }
 

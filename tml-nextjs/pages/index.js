@@ -23,10 +23,10 @@ export default function Home(props) {
 }
 
 export const getServerSideProps = async ({ req, res }) => {
-  const response = await fetch('http://localhost:3001/api/db')
+  const response = await fetch('http://localhost:3000/api/db')
   const db = await response.json()
 
-  const res1 = await fetch('http://localhost:3001/api/trade')
+  const res1 = await fetch('http://localhost:3000/api/trade')
   const trade = await res1.json()
 
   return {

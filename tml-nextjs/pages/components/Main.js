@@ -11,15 +11,16 @@ import ClipLoader from 'react-spinners/PulseLoader'
 import { useRouter } from 'next/router';
 import { Pagination } from 'rsuite';
 import "rsuite/dist/rsuite.css";
+import moment from 'moment';
 
 export default function Main(datas) {
+
     const router = useRouter();
 
     const { Column, HeaderCell, Cell, Row } = Table;
     const { render, setRender } = datas.render;
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
-
     const [data, setData] = useState(datas.data.db);
     const [loading, setLoading] = useState(false)
     const [userChoice, setUserChoice] = useState("");
@@ -30,17 +31,6 @@ export default function Main(datas) {
         setPage(1);
         setLimit(dataKey);
     };
-
-    const sortedDesc = day.sort(
-        (objA, objB) =>
-            new Date(objB.createdate) - new Date(objA.createdate)
-    );
-
-    const dataTable = sortedDesc.filter((v, i) => {
-        const start = limit * (page - 1);
-        const end = start + limit;
-        return (i >= start && i < end);
-    });
 
     useEffect(() => {
         setLoading(true)
@@ -198,15 +188,26 @@ export default function Main(datas) {
         setPageNumber(selected);
     };
 
+ 
+
+    const sortedDesc = day.sort(
+        (objA, objB) =>
+            new Date(objB.createdate) - new Date(objA.createdate)
+    );
+
+    
+    const dataTable = sortedDesc.filter((v, i) => {
+        const start = limit * (page - 1);
+        const end = start + limit;
+        return (i >= start && i < end);
+    });
+   
+
     const defaultDate = () => {
         const result = data.filter((d) => {
-            var time = new Date(d.createdate);
+            var date = new Date(d.createdate);
             return (
-                (isNaN(startdate) && isNaN(enddate)) ||
-                (isNaN(startdate) && time <= enddate) ||
-                (startdate <= time && isNaN(enddate)) ||
-                (startdate <= time && time <= enddate) ||
-                (startdate.getDate() <= time.getDate() && time.getDate() <= enddate.getDate())
+                date >= startdate && date <= enddate
             );
         });
         setDay(result);
@@ -237,8 +238,6 @@ export default function Main(datas) {
                 : date.getFullYear() + (date.getMonth() + 1)}`,
         })
     }
-
-    var i = 1;
 
     return (
         <div className={`${style.App} p-3 bg-slate-50`}>

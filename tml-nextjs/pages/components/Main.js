@@ -182,50 +182,41 @@ export default function Main(datas) {
         }
     };
 
-
     const pageCount = Math.ceil(day.length / perPage);
     const changePage = ({ selected }) => {
         setPageNumber(selected);
     };
-
- 
 
     const sortedDesc = day.sort(
         (objA, objB) =>
             new Date(objB.createdate) - new Date(objA.createdate)
     );
 
-    
     const dataTable = sortedDesc.filter((v, i) => {
         const start = limit * (page - 1);
         const end = start + limit;
         return (i >= start && i < end);
     });
-   
 
     const defaultDate = () => {
         const result = data.filter((d) => {
             var date = new Date(d.createdate);
+            const parseDate = moment(date).format('YYYY-MM-DD')
             return (
-                date >= startdate && date <= enddate
+                parseDate >= moment(startdate).format('YYYY-MM-DD')
+                && parseDate <= moment(enddate).format('YYYY-MM-DD')
             );
         });
         setDay(result);
     }
 
-    setTimeout(() => {
+    useEffect(() => {
         defaultDate()
-    }, 500)
+    },[])
 
-    const display = dataTable.map((data, i) =>
-        <tr key={i}>
-            <td>{i + 1}</td>
-            <td>{data.tradeshopid}</td>
-            <td>{data.Name}</td>
-            <td>{(data.Amount).toLocaleString()} ₮</td>
-            <td>{data.createdate}</td>
-        </tr>
-    );
+    // setTimeout(() => {
+    //     defaultDate()
+    // }, 500)
 
     const arr = [];
 
@@ -336,12 +327,13 @@ export default function Main(datas) {
             <div
                 className={`flex flex-col justify-end w-full items-center mt-[25%] sm:flex-row sm:mt-0`}
             >
-                <div className="flex items-center justify-center w-full lg:w-[50%] xl:w-[40%]">
-                    <div className="w-full sm:w-1/3">
+                <div className="flex flex-col md:flex-row items-center justify-center w-full lg:w-[50%] xl:w-[40%]">
+                    <div className="flex">
+                    <div className="w-full sm:w-1/2">
                         <DatePicker
                             size="lg"
                             value={startdate}
-                            onChange={(date) => { setStartDate(date); }}
+                            onChange={(date) => { setStartDate(date) }}
                             startdate={startdate}
                             className='w-full'
                             oneTap
@@ -351,19 +343,22 @@ export default function Main(datas) {
                     <div className="flex">
                         <p className="px-2 my-auto mx-auto">to</p>
                     </div>
-                    <div className="w-full sm:w-1/3">
+                    <div className="w-full sm:w-1/2">
                         <DatePicker
                             size="lg"
                             value={enddate}
-                            onChange={(date) => { setEndDate(date); }}
+                            onChange={(date) => { setEndDate(date) }}
                             enddate={enddate}
                             className='w-full'
                             oneTap
                             cleanable={false}
                         />
                     </div>
+                    </div>
+                    <div onClick={defaultDate} className="mt-2 md:mb-2">
+                        <button className="bg-slate-200 p-2 mx-3 text-black font-semibold rounded-md cursor-pointer">Search</button>
+                    </div>
                 </div>
-
             </div>
 
             <div className={`body mt-5`}>
@@ -387,13 +382,26 @@ export default function Main(datas) {
                                 </tr>
                             </thead>
                             <tbody className={`w-full`}>
-                                {display != '' ? display : <tr className="text-center font-semibold text-base">
-                                    <td className="border-none"></td>
-                                    <td className="border-none"></td>
-                                    <td className="border-none">Өгөгдөл байхгүй байна.</td>
-                                    <td className="border-none"></td>
-                                    <td className="border-none"></td>
-                                </tr>}
+                                {dataTable === [] || dataTable == ''
+                                    ?
+                                    <tr className="text-center font-semibold text-base">
+                                        <td className="border-none"></td>
+                                        <td className="border-none"></td>
+                                        <td className="border-none">Өгөгдөл байхгүй байна.</td>
+                                        <td className="border-none"></td>
+                                        <td className="border-none"></td>
+                                    </tr>
+                                    :
+                                    dataTable.map((data, i) =>
+                                        <tr key={i} >
+                                            <td>{i + 1}</td>
+                                            <td>{data.tradeshopid}</td>
+                                            <td>{data.Name}</td>
+                                            <td>{(data.Amount).toLocaleString()} ₮</td>
+                                            <td>{data.createdate}</td>
+                                        </tr>
+                                    )
+                                }
                             </tbody>
                         </Table>
 

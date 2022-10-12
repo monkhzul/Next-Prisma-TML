@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from "react";
 import Table from "react-bootstrap/Table";
 import Image from "next/image";
 import * as XLSX from "xlsx";
-import ReactPaginate from "react-paginate";
 import { CSVLink } from "react-csv";
 import AsyncSelect from "react-select/async";
 import { ToastContainer, toast } from "react-toastify";
@@ -12,13 +11,12 @@ import ClipLoader from 'react-spinners/PulseLoader'
 import { useRouter } from 'next/router';
 import { Pagination } from 'rsuite';
 import "rsuite/dist/rsuite.css";
-import Head from 'next/head'
 
 export default function Main(datas) {
     const router = useRouter();
 
     const { Column, HeaderCell, Cell, Row } = Table;
-    const {render, setRender} = datas.render;
+    const { render, setRender } = datas.render;
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
 
@@ -181,7 +179,7 @@ export default function Main(datas) {
                             setLoading(false)
                         }
                     })
-                    .finally(() => setRender(!render))
+                        .finally(() => setRender(!render))
                 };
                 insert();
             }
@@ -218,15 +216,15 @@ export default function Main(datas) {
         defaultDate()
     }, 500)
 
-    const display = dataTable.map((data, i) => 
-                <tr key={i}>
-                    <td>{i+1}</td>
-                    <td>{data.tradeshopid}</td>
-                    <td>{data.Name}</td>
-                    <td>{(data.Amount).toLocaleString()} ₮</td>
-                    <td>{data.createdate}</td>
-                </tr>
-            );
+    const display = dataTable.map((data, i) =>
+        <tr key={i}>
+            <td>{i + 1}</td>
+            <td>{data.tradeshopid}</td>
+            <td>{data.Name}</td>
+            <td>{(data.Amount).toLocaleString()} ₮</td>
+            <td>{data.createdate}</td>
+        </tr>
+    );
 
     const arr = [];
 
@@ -380,29 +378,29 @@ export default function Main(datas) {
                 </div> :
                     <div className="justify-center flex w-full">
                         <Table bordered hover responsive>
-                        <thead className="bg-gray-100">
-                            <tr>
-                                <th>#</th>
-                                <th className="teble-fixed">Харилцагчийн ID</th>
-                                <th>Харилцагчийн нэр</th>
-                                <th>Үнийн дүн</th>
-                                <th>Он сар өдөр</th>
-                            </tr>
-                        </thead>
-                        <tbody className={`w-full`}>
-                        {display != '' ? display :  <tr className="text-center font-semibold text-base">
+                            <thead className="bg-gray-100">
+                                <tr>
+                                    <th>#</th>
+                                    <th className="teble-fixed">Харилцагчийн ID</th>
+                                    <th>Харилцагчийн нэр</th>
+                                    <th>Үнийн дүн</th>
+                                    <th>Он сар өдөр</th>
+                                </tr>
+                            </thead>
+                            <tbody className={`w-full`}>
+                                {display != '' ? display : <tr className="text-center font-semibold text-base">
                                     <td className="border-none"></td>
                                     <td className="border-none"></td>
                                     <td className="border-none">Өгөгдөл байхгүй байна.</td>
                                     <td className="border-none"></td>
                                     <td className="border-none"></td>
                                 </tr>}
-                        </tbody>
-                    </Table>
-                        
+                            </tbody>
+                        </Table>
+
                     </div>
                 }
-        
+
                 <Pagination
                     prev
                     next

@@ -18,28 +18,15 @@ export default function Home(props) {
           <Main data = {props} render = {{render, setRender}} />
       </main>
 
-      {/* <footer className={`${styles.footer}`}>
-        <a
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-          className='font-bold'
-        >
-          TML{' '}
-          <span className={`${styles.logo} `}>
-          
-          </span> 
-        </a>
-      </footer> */}
     </div>
   )
 }
 
 export const getServerSideProps = async ({ req, res }) => {
-  const response = await fetch('http://localhost:3000/api/db')
+  const response = await fetch('http://localhost:3001/api/db')
   const db = await response.json()
 
-  const res1 = await fetch('http://localhost:3000/api/trade')
+  const res1 = await fetch('http://localhost:3001/api/trade')
   const trade = await res1.json()
 
   return {

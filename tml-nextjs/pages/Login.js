@@ -9,7 +9,9 @@ export default function Home(props) {
   const [render, setRender] = useState(false);
   const router = useRouter()
   function login() {
-    router.push('/components/Main')
+    router.push({
+      pathname: '/components/Main'
+    })
   }
   return (
     <div className={styles.container}>

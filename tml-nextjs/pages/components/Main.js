@@ -23,9 +23,9 @@ export default function Main(props) {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false)
     const [userChoice, setUserChoice] = useState("");
-    const [trade, setTrade] = useState(props.data.trade);
-    const [data, setData] = useState(props.data.db);
-    const [day, setDay] = useState(props.data.db);
+    const [trade, setTrade] = useState(props.trade);
+    const [data, setData] = useState(props.db);
+    const [day, setDay] = useState(props.db);
 
 
     const [success, setSuccess] = useState(false);

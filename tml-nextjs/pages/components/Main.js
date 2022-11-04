@@ -1,31 +1,34 @@
 import React, { useRef, useState, useEffect } from "react";
 import Table from "react-bootstrap/Table";
 import Image from "next/image";
+import Head from "next/head";
 import * as XLSX from "xlsx";
 import { CSVLink } from "react-csv";
 import AsyncSelect from "react-select/async";
 import { ToastContainer, toast } from "react-toastify";
 import style from "../../styles/style.module.css";
 import DatePicker from "rsuite/DatePicker";
-import ClipLoader from 'react-spinners/PulseLoader'
+import ClipLoader from 'react-spinners/PulseLoader';
 import { useRouter } from 'next/router';
 import { Pagination } from 'rsuite';
 import "rsuite/dist/rsuite.css";
 import moment from 'moment';
 
-export default function Main(datas) {
+export default function Main(props) {
 
     const router = useRouter();
 
     const { Column, HeaderCell, Cell, Row } = Table;
-    const { render, setRender } = datas.render;
     const [limit, setLimit] = useState(10);
     const [page, setPage] = useState(1);
-    const [data, setData] = useState(datas.data.db);
     const [loading, setLoading] = useState(false)
     const [userChoice, setUserChoice] = useState("");
-    const [day, setDay] = useState(datas.data.db);
-    const [trade, setTrade] = useState(datas.data.trade);
+    const [trade, setTrade] = useState(props.trade);
+    const [data, setData] = useState(props.db);
+    const [day, setDay] = useState(props.db);
+
+    const [success, setSuccess] = useState(false);
+    const [prices, setPrices] = useState(0)
 
     const handleChangeLimit = dataKey => {
         setPage(1);
@@ -58,6 +61,19 @@ export default function Main(datas) {
 
     const perPage = 25;
     const pagesVisited = pageNumber * perPage;
+
+    var picker = []
+    for(var i in data) {
+        if ((data[i].createdate.slice(0,10)) >= moment(startdate).format('YYYY-MM-DD') && (data[i].createdate.slice(0,10)) <= moment(enddate).format('YYYY-MM-DD')) {
+            picker.push({
+                id: data[i].id,
+                Amount: data[i].Amount,
+                Name: data[i].Name,
+                tradeshopid: data[i].tradeshopid,
+                createdate: data[i].createdate
+            })
+        } 
+    }
 
     const handleClick = () => {
         inputRef.current.click();
@@ -116,8 +132,8 @@ export default function Main(datas) {
                 }
                 response.then((res) => {
                     if (res.ok) {
-                        router.reload(router.asPath)
                         toast("Амжилттай!");
+                        router.reload(router.asPath)
                         setLoading(false)
                     }
                     else {
@@ -137,8 +153,7 @@ export default function Main(datas) {
         e.preventDefault();
         const priceValue = document.getElementById("price")
         const price = priceValue.value;
-
-        console.log(userChoice)
+        setPrices(price)
 
         if (userChoice.value != undefined) {
             if (price != '' && price != 0) {
@@ -159,17 +174,17 @@ export default function Main(datas) {
                         }),
                     }).then((res) => {
                         if (res.ok) {
-                            router.reload(router.asPath)
                             toast("Амжилттай!");
+                            router.reload(router.asPath)
                             priceValue.value = '';
 
                             setLoading(false)
                         } else {
                             toast("Амжилтгүй! Буруу өгөгдөл орсон байна.");
+                            setSuccess(false)
                             setLoading(false)
                         }
                     })
-                        .finally(() => setRender(!render))
                 };
                 insert();
             }
@@ -182,41 +197,40 @@ export default function Main(datas) {
         }
     };
 
-    const pageCount = Math.ceil(day.length / perPage);
-    const changePage = ({ selected }) => {
-        setPageNumber(selected);
-    };
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            var input = document.getElementById("price");
+            input.addEventListener("keyup", function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault()
+                    return false
+                }
+            })
+        }
+    },[])
 
-    const sortedDesc = day.sort(
-        (objA, objB) =>
-            new Date(objB.createdate) - new Date(objA.createdate)
-    );
+    
+    // const defaultDate = () => {
+    //     var result = data.filter((d) => {
+    //         var date = new Date(d.createdate);
+    //         const parseDate = moment(date).format('YYYY-MM-DD')
+    //         return (
+    //             parseDate >= moment(startdate).format('YYYY-MM-DD') && parseDate <= moment(enddate).format('YYYY-MM-DD')
+    //         );
+    //     });
+    //     setDay(result);
+    // }
 
-    const dataTable = sortedDesc.filter((v, i) => {
+    // const sortedDesc = picker.sort(
+    //     (objA, objB) => 
+    //     new Date(objB.createdate) - new Date(objA.createdate)
+    // );
+
+    const dataTable = picker.filter((v, i) => {
         const start = limit * (page - 1);
         const end = start + limit;
         return (i >= start && i < end);
-    });
-
-    const defaultDate = () => {
-        const result = data.filter((d) => {
-            var date = new Date(d.createdate);
-            const parseDate = moment(date).format('YYYY-MM-DD')
-            return (
-                parseDate >= moment(startdate).format('YYYY-MM-DD')
-                && parseDate <= moment(enddate).format('YYYY-MM-DD')
-            );
-        });
-        setDay(result);
-    }
-
-    useEffect(() => {
-        defaultDate()
-    },[])
-
-    // setTimeout(() => {
-    //     defaultDate()
-    // }, 500)
+    });    
 
     const arr = [];
 
@@ -225,13 +239,15 @@ export default function Main(datas) {
             tradeshopid: day[i].tradeshopid,
             amount: day[i].Amount,
             createDate: day[i].createdate,
-            mmonth: `${date.getDate() < 10 ? date.getFullYear() + '0' + (date.getMonth() + 1)
-                : date.getFullYear() + (date.getMonth() + 1)}`,
+            mmonth: moment(date).format('MM-YYYY')
         })
     }
 
     return (
         <div className={`${style.App} p-3 bg-slate-50`}>
+                <Head>
+                    <title>TML</title>
+                </Head>
             <div className={`head flex flex-col xl:flex-row w-full `}>
                 <form
                     action=""
@@ -259,7 +275,7 @@ export default function Main(datas) {
                                 Үнийн дүн
                             </label>
                             <input
-                                type="text"
+                                type="number"
                                 name=""
                                 id="price"
                                 className={`p-2 ${style.price} bg-white`}
@@ -267,12 +283,13 @@ export default function Main(datas) {
                             />
                         </div>
                     </div>
-                    <button
+                    <div
+                        id="sentButton"
                         className={`border bg-gray-200 cursor-pointer w-1/3 p-2 my-3 mx-auto font-semibold flex justify-center hover:bg-[#777a8b] hover:text-gray-100`}
                         onClick={insertOne}
                     >
                         Илгээх
-                    </button>
+                    </div>
                 </form>
 
                 <ToastContainer
@@ -283,6 +300,7 @@ export default function Main(datas) {
                 />
 
                 <div
+                    id="list"
                     className={`${style.customerForm} w-full xl:w-1/2 sm:mb-5 flex justify-around items-center`}
                 >
                     <input
@@ -308,7 +326,7 @@ export default function Main(datas) {
                     >
                         <CSVLink
                             data={arr}
-                            filename="TML.csv"
+                            filename="TML.xlsx"
                             className={`text-black hover:text-gray-50 font-semibold no-underline w-full flex justify-center`}
                         >
                             <Image
@@ -355,9 +373,10 @@ export default function Main(datas) {
                         />
                     </div>
                     </div>
-                    <div onClick={defaultDate} className="mt-2 md:mb-2">
-                        <button className="bg-slate-200 p-2 mx-3 text-black font-semibold rounded-md cursor-pointer">Search</button>
-                    </div>
+                    {/* <div className="mt-2 md:mb-2 bg-slate-200 p-2 mx-3 font-semibold rounded-md cursor-pointer hover:bg-[#648a7b] hover:text-white"
+                    onClick={defaultDate}>
+                        Search
+                    </div> */}
                 </div>
             </div>
 
@@ -418,7 +437,7 @@ export default function Main(datas) {
                     maxButtons={5}
                     size="md"
                     layout={['total', '-', 'pager', 'skip']}
-                    total={day.length}
+                    total={picker.length}
                     limitOptions={[10, 30, 50]}
                     limit={limit}
                     activePage={page}
@@ -430,3 +449,16 @@ export default function Main(datas) {
     );
 }
 
+export const getServerSideProps = async ({ req, res }) => {
+    const response = await fetch('http://localhost:3001/api/db')
+    const db = await response.json()
+  
+    const res1 = await fetch('http://localhost:3001/api/trade')
+    const trade = await res1.json()
+  
+    return {
+        props: {
+          db, trade
+        }
+    }
+}

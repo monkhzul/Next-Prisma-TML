@@ -23,9 +23,10 @@ export default function Main(props) {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false)
     const [userChoice, setUserChoice] = useState("");
-    const [trade, setTrade] = useState(props.trade);
-    const [data, setData] = useState(props.db);
-    const [day, setDay] = useState(props.db);
+    const [trade, setTrade] = useState(props.data.trade);
+    const [data, setData] = useState(props.data.db);
+    const [day, setDay] = useState(props.data.db);
+
 
     const [success, setSuccess] = useState(false);
     const [prices, setPrices] = useState(0)
@@ -42,13 +43,14 @@ export default function Main(props) {
         }, 500)
     }, [])
 
-    var array = [];
-    for (let i = 0; i < trade.length; i++) {
-        array.push({
-            value: trade[i].TradeShopId,
-            label: trade[i].Name,
-        });
-    }
+        var array = [];
+        for (let i = 0; i < trade.length; i++) {
+            array.push({
+                value: trade[i].TradeShopId,
+                label: trade[i].Name,
+            });
+        }
+    
 
     const inputRef = useRef(null);
 
@@ -450,10 +452,10 @@ export default function Main(props) {
 }
 
 export const getServerSideProps = async ({ req, res }) => {
-    const response = await fetch('http://localhost:3001/api/db')
+    const response = await fetch('http://localhost:3000/api/db')
     const db = await response.json()
   
-    const res1 = await fetch('http://localhost:3001/api/trade')
+    const res1 = await fetch('http://localhost:3000/api/trade')
     const trade = await res1.json()
   
     return {

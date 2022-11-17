@@ -10,10 +10,11 @@ export default async function handler(req, res) {
   const Amount = req.body.Amount;
   const state = req.body.state;
   const createUser = req.body.createUser;
+  const UsedTotalAmount = req.body.UsedTotalAmount;
   
   const data = await prisma.$queryRaw`INSERT INTO [SMTExchange_Anungoo].[dbo].[t_DiscountTML]
-        ([tradeshopid], [mmonth], [discounttype], [Amount], [state], [createdate], [createUser])
-        VALUES (${tradeshopid}, '${mmonth}', '${discounttype}', ${Amount}, ${state}, getdate(), ${createUser})`
+        ([tradeshopid],[mmonth],[discounttype],[Amount],[state],[createdate],[createUser],[UsedTotalAmount])
+        VALUES (${tradeshopid}, '${mmonth}', '${discounttype}', ${Amount}, ${state}, getdate(), ${createUser}, ${UsedTotalAmount})`
 
   res.status(200).json(data)
 }

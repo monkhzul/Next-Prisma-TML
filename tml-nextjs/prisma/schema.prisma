@@ -3432,6 +3432,8 @@ model t_Goods_Elements {
   @@index([GroupId], map: "iGroupId_t_Goods_Elements")
   @@index([GroupId], map: "IX_Goods_Elements_GroupID")
   @@index([ParentID, GroupId], map: "IX_t_GoodElements_clust", clustered: true)
+  @@index([GroupId, Code, uIDSMT], map: "_not_1C_IX_t_Goods_Elements_863")
+  @@index([GroupId, uIDSMT], map: "_not_1C_IX_t_Goods_Elements_865")
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
@@ -7096,6 +7098,7 @@ model t_SupplyDetails {
   WOActionQty Int?
 
   @@index([DocumentId, Article, Price], map: "_dta_index_t_SupplyDetails_8_1737421609__K2_K3_K6_5_9")
+  @@index([Quantity], map: "_not_1C_IX_t_SupplyDetails_23")
 }
 
 model t_SupplyTypes {
@@ -7653,7 +7656,7 @@ model t_TerminalExportPLTypeCach {
 model t_TerminalExportProductsCach {
   TerminalId        Int
   ProductId         Int
-  Article           String  @db.NChar(25)
+  Article           String  @db.NVarChar(25)
   CSKUid            BigInt
   StatusID          Int
   Active            Boolean @default(false, map: "DF_t_TerminalExportProductsCach_Active")
@@ -7662,9 +7665,6 @@ model t_TerminalExportProductsCach {
   ArticleStatusId   Int?
 
   @@id([TerminalId, Article, StatusID], map: "PK_TerminalExportProductsCach", clustered: false)
-  @@index([TerminalId, CSKUid], map: "_not_1C_IX_t_TerminalExportProductsCach_17222")
-  @@index([TerminalId], map: "_not_1C_IX_t_TerminalExportProductsCach_17224")
-  @@index([TerminalId, ProductCode], map: "IX_TerminalExportProductsCach_ProductCode")
 }
 
 model t_TerminalExportTradeshops {
@@ -7868,7 +7868,7 @@ model t_TerminalImport_2_DraftOrderDetails2 {
   TerminalId      Int
   ImportTime      DateTime @db.DateTime
   DocId           Int
-  ProductCode     String   @db.NChar(25)
+  ProductCode     String   @db.NVarChar(25)
   ProductType     Int
   ProductId       Int?
   Qty             Int
@@ -9048,6 +9048,7 @@ model t_VisitPlan {
 
   @@index([DateNow, SaleRepID], map: "_not_1C_IX_t_VisitPlan_882326")
   @@index([SaleRepID], map: "iSaleRepId_t_VisitPlan")
+  @@index([DateNow], map: "_not_1C_IX_t_VisitPlan_76126")
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
@@ -9569,4 +9570,81 @@ model xtMAX {
 model ZeelUdurtuuTuluh {
   Id        Int  @id(map: "PK_ZeelUdurtuuTuluh") @default(autoincrement())
   SaleRepId Int?
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model ChannelCode {
+  ChannelName String? @db.NVarChar(50)
+  ItemId      Int?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model CVSCust {
+  TradeshopID Int?
+  SaleRepID   Int
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model GS25 {
+  TradeshopID Float?
+  SaleRepID   Float?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model GT_Cus {
+  TradeshopID Float?
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model nemSuvag {
+  Channel Float?
+
+  @@ignore
+}
+
+model t_TerminalExport_Buffer_72 {
+  ID         Decimal  @id(map: "PK_t_TerminalExport_Buffer_72") @db.Decimal(20, 0)
+  TerminalId Int
+  VersionId  Int
+  TableId    Int
+  Key        String   @db.NVarChar(255)
+  Data       String   @db.NVarChar(Max)
+  Diff       Int      @default(0, map: "DF__t_Terminal__Diff__2B82C5DF")
+  DTime      DateTime @default(now(), map: "DF__t_Termina__DTime__2E5F328A") @db.DateTime
+
+  @@unique([TerminalId, VersionId, TableId, Key], map: "IX_t_TerminalExport_Buffer_72_Dim")
+}
+
+model t_TerminalExport_Buffer_74 {
+  ID         Decimal  @id(map: "PK_t_TerminalExport_Buffer_74") @db.Decimal(20, 0)
+  TerminalId Int
+  VersionId  Int
+  TableId    Int
+  Key        String   @db.NVarChar(255)
+  Data       String   @db.NVarChar(Max)
+  Diff       Int      @default(0, map: "DF__t_Terminal__Diff__39D0E536")
+  DTime      DateTime @default(now(), map: "DF__t_Termina__DTime__3AC5096F") @db.DateTime
+
+  @@unique([TerminalId, VersionId, TableId, Key], map: "IX_t_TerminalExport_Buffer_74_Dim")
+}
+
+model t_TerminalExport_Buffer_79 {
+  ID         Decimal  @id(map: "PK_t_TerminalExport_Buffer_79") @db.Decimal(20, 0)
+  TerminalId Int
+  VersionId  Int
+  TableId    Int
+  Key        String   @db.NVarChar(255)
+  Data       String   @db.NVarChar(Max)
+  Diff       Int      @default(0, map: "DF__t_Terminal__Diff__2C76EA18")
+  DTime      DateTime @default(now(), map: "DF__t_Termina__DTime__2D6B0E51") @db.DateTime
+
+  @@unique([TerminalId, VersionId, TableId, Key], map: "IX_t_TerminalExport_Buffer_79_Dim")
 }

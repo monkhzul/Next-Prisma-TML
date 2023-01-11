@@ -43,14 +43,14 @@ export default function Main(props) {
         }, 500)
     }, [])
 
-        var array = [];
-        for (let i = 0; i < trade.length; i++) {
-            array.push({
-                value: trade[i].TradeShopId,
-                label: trade[i].Name,
-            });
-        }
-    
+    var array = [];
+    for (let i = 0; i < trade.length; i++) {
+        array.push({
+            value: trade[i].TradeShopId,
+            label: trade[i].Name,
+        });
+    }
+
 
     const inputRef = useRef(null);
 
@@ -65,8 +65,8 @@ export default function Main(props) {
     const pagesVisited = pageNumber * perPage;
 
     var picker = []
-    for(var i in data) {
-        if ((data[i].createdate.slice(0,10)) >= moment(startdate).format('YYYY-MM-DD') && (data[i].createdate.slice(0,10)) <= moment(enddate).format('YYYY-MM-DD')) {
+    for (var i in data) {
+        if ((data[i].createdate.slice(0, 10)) >= moment(startdate).format('YYYY-MM-DD') && (data[i].createdate.slice(0, 10)) <= moment(enddate).format('YYYY-MM-DD')) {
             picker.push({
                 id: data[i].id,
                 Amount: data[i].Amount,
@@ -74,7 +74,7 @@ export default function Main(props) {
                 tradeshopid: data[i].tradeshopid,
                 createdate: data[i].createdate
             })
-        } 
+        }
     }
 
     const handleClick = () => {
@@ -204,16 +204,16 @@ export default function Main(props) {
     useEffect(() => {
         if (typeof window !== 'undefined') {
             var input = document.getElementById("price");
-            input.addEventListener("keyup", function(event) {
+            input.addEventListener("keyup", function (event) {
                 if (event.key === 'Enter') {
                     event.preventDefault()
                     return false
                 }
             })
         }
-    },[])
+    }, [])
 
-    
+
     // const defaultDate = () => {
     //     var result = data.filter((d) => {
     //         var date = new Date(d.createdate);
@@ -234,7 +234,7 @@ export default function Main(props) {
         const start = limit * (page - 1);
         const end = start + limit;
         return (i >= start && i < end);
-    });    
+    });
 
     const arr = [];
 
@@ -249,9 +249,9 @@ export default function Main(props) {
 
     return (
         <div className={`${style.App} p-3 bg-slate-50`}>
-                <Head>
-                    <title>TML</title>
-                </Head>
+            <Head>
+                <title>TML</title>
+            </Head>
             <div className={`head flex flex-col xl:flex-row w-full `}>
                 <form
                     action=""
@@ -330,7 +330,7 @@ export default function Main(props) {
                     >
                         <CSVLink
                             data={arr}
-                            filename="TML.xlsx"
+                            filename="TML"
                             className={`text-black hover:text-gray-50 font-semibold no-underline w-full flex justify-center`}
                         >
                             <Image
@@ -351,31 +351,31 @@ export default function Main(props) {
             >
                 <div className="flex flex-col md:flex-row items-center justify-center w-full lg:w-[50%] xl:w-[40%]">
                     <div className="flex">
-                    <div className="w-full sm:w-1/2">
-                        <DatePicker
-                            size="lg"
-                            value={startdate}
-                            onChange={(date) => { setStartDate(date) }}
-                            startdate={startdate}
-                            className='w-full'
-                            oneTap
-                            cleanable={false}
-                        />
-                    </div>
-                    <div className="flex">
-                        <p className="px-2 my-auto mx-auto">to</p>
-                    </div>
-                    <div className="w-full sm:w-1/2">
-                        <DatePicker
-                            size="lg"
-                            value={enddate}
-                            onChange={(date) => { setEndDate(date) }}
-                            enddate={enddate}
-                            className='w-full'
-                            oneTap
-                            cleanable={false}
-                        />
-                    </div>
+                        <div className="w-full sm:w-1/2">
+                            <DatePicker
+                                size="lg"
+                                value={startdate}
+                                onChange={(date) => { setStartDate(date) }}
+                                startdate={startdate}
+                                className='w-full'
+                                oneTap
+                                cleanable={false}
+                            />
+                        </div>
+                        <div className="flex">
+                            <p className="px-2 my-auto mx-auto">to</p>
+                        </div>
+                        <div className="w-full sm:w-1/2">
+                            <DatePicker
+                                size="lg"
+                                value={enddate}
+                                onChange={(date) => { setEndDate(date) }}
+                                enddate={enddate}
+                                className='w-full'
+                                oneTap
+                                cleanable={false}
+                            />
+                        </div>
                     </div>
                     {/* <div className="mt-2 md:mb-2 bg-slate-200 p-2 mx-3 font-semibold rounded-md cursor-pointer hover:bg-[#648a7b] hover:text-white"
                     onClick={defaultDate}>
@@ -456,13 +456,13 @@ export default function Main(props) {
 export const getServerSideProps = async ({ req, res }) => {
     const response = await fetch('http://localhost:3001/api/db')
     const db = await response.json()
-  
+
     const res1 = await fetch('http://localhost:3001/api/trade')
     const trade = await res1.json()
-  
+
     return {
         props: {
-          db, trade
+            db, trade
         }
     }
 }
